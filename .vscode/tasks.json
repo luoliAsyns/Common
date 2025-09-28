@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build", // 任务名称，需与launch.json中的preLaunchTask一致
+            "command": "dotnet", // 执行dotnet命令
+            "type": "process",
+            "args": [
+                "build", // 构建命令
+                "${workspaceFolder}/GenerateEntities/GenerateEntities.csproj", // 你的项目文件路径
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

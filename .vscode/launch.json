@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build", // 调试前执行"build"任务
+            "program": "${workspaceFolder}/GenerateEntities/bin/Debug/net8.0/GenerateEntities.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/GenerateEntities",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "justMyCode": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
