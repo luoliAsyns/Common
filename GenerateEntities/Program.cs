@@ -45,11 +45,20 @@ namespace GenerateEntities
 
 
 
-            DBConnector db = new DBConnector(@"/home/luoli/Desktop/code/Common/GenerateEntities/bin/Debug/net8.0/database.json", logger);
+            string dbConfigPath = @"/home/luoli/Desktop/code/Common/GenerateEntities/bin/Debug/net8.0/database.json";
+            string targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
+
+
+            dbConfigPath = @"/home/luoli/Desktop/code/Common/GenerateEntities/bin/Debug/net8.0/database.json";
+            targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
+
+
+            DBConnector db = new DBConnector(dbConfigPath, logger);
+
+
 
             SqlSugarScope sqlClient = db.SqlClient ?? throw new Exception("sqlClient is null");
 
-            string targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
 
             Dictionary<string, string> nameMapper = new Dictionary<string, string>();
             nameMapper.Add("partners", "PartnerEntity");

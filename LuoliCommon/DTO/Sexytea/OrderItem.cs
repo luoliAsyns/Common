@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LuoliHelper.Entities.Sexytea
+namespace LuoliCommon.DTO.Sexytea
 {
     public class OrderItem
     {

@@ -20,6 +20,7 @@ namespace LuoliDatabase.Entities
            /// Default:
            /// Nullable:False
            /// </summary>           
+           
            [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
            public long id {get;set;}
 
