@@ -28,10 +28,7 @@ namespace LuoliUtils
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
-                if (!(onError is null))
-                {
-                    onError();
-                }
+                onError?.Invoke();
             }
         }
 

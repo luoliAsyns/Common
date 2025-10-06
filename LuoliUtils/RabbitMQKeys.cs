@@ -8,7 +8,7 @@ namespace  LuoliUtils
 {
     public static class RabbitMQKeys
     {
-        public static string CreatedOrderChannel = "Order:Created";
-        public static string ConsumingOrderChannel = "Order:Consuming";
+        public static string ExternalOrderInserted = ":insert";
+        public static string ConsumeInfoInserted = ":consuming";
     }
 }
