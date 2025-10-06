@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="../LuoliDatabase/LuoliDatabase.csproj" />
+    <ProjectReference Include="..\LuoliUtils\LuoliUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />

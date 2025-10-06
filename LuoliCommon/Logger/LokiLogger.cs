@@ -1,5 +1,6 @@
 
 
+using Serilog;
 using System.Text;
 
 namespace LuoliCommon.Logger
@@ -15,20 +16,22 @@ namespace LuoliCommon.Logger
         private Action<string>? _afterLog;
 
         // 构造函数：初始化 Loki 连接信息和标签
-        public LokiLogger(string lokiEndpoint, Dictionary<string, string> labels)
+        public LokiLogger(string lokiEndpoint, Dictionary<string, string> labels, HttpClient httpClient)
         {
             _lokiEndpoint = lokiEndpoint ?? throw new ArgumentNullException(nameof(lokiEndpoint));
             _labels = labels ?? new Dictionary<string, string>();
 
+            _labels["env"] = "production";
+#if DEBUG
+            _labels["env"] = "debug";
+#endif
+
             // 初始化 HttpClient（建议在 IOC 中注册为单例）
-            _httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(5)
-            };
+            _httpClient = httpClient;
 
             // 添加默认标签（如应用名称、环境等）
             if (!_labels.ContainsKey("app"))
-                _labels["app"] = "LuoliApplication";
+                _labels["app"] = "ExternalOrderService";
             if (!_labels.ContainsKey("env"))
                 _labels["env"] = "production";
         }
@@ -51,10 +54,7 @@ namespace LuoliCommon.Logger
             try
             {
                 // 构建带级别标签的日志条目
-                var logLabels = new Dictionary<string, string>(_labels)
-                {
-                    ["level"] = level
-                };
+                _labels["level"] = level;
 
                 // 构建 Loki 要求的日志格式
                 var logEntry = new
@@ -63,11 +63,11 @@ namespace LuoliCommon.Logger
                     {
                         new
                         {
-                            stream = logLabels,
+                            stream = _labels,
                             values = new[] { new[]
                             { 
                                 // Loki 时间戳（毫秒级 Unix 时间）
-                                $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}",
+                                $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}000000",
                                 // 日志内容（可包含结构化数据）
                                 $"[{DateTime.UtcNow:o}] {message}"
                             }}
@@ -83,9 +83,7 @@ namespace LuoliCommon.Logger
                 );
 
                 // 异步发送（实际项目中可根据需求改为同步）
-                var response = _httpClient.PostAsync(_lokiEndpoint, content).GetAwaiter().GetResult();
-                response.EnsureSuccessStatusCode();
-
+                _httpClient.PostAsync(_lokiEndpoint, content);
 
             }
             catch (Exception ex)

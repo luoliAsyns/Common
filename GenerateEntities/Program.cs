@@ -2,7 +2,8 @@
 using LuoliDatabase;
 using SqlSugar;
 using LuoliCommon.Logger;
-using Microsoft.Extensions.DependencyInjection; // Add this using directive
+using Microsoft.Extensions.DependencyInjection;
+using LuoliHelper.Utils; // Add this using directive
 
 
 namespace GenerateEntities
@@ -49,16 +50,26 @@ namespace GenerateEntities
             string targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
 
 
-            dbConfigPath = @"/home/luoli/Desktop/code/Common/GenerateEntities/bin/Debug/net8.0/database.json";
-            targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
+            dbConfigPath = @"E:\Code\repos\ExternalOrderService\ExternalOrderService\bin\Debug\net8.0\debugConfigs\master_db.json";
+            targetFolder = @"E:\Code\repos\Common\LuoliDatabase\Entities";
+
+            var sqlSugarConnection =  new SqlSugarConnection(dbConfigPath);
 
 
-            DBConnector db = new DBConnector(dbConfigPath, logger);
 
 
+            SqlSugarScope sqlClient = new SqlSugarScope(new SqlSugar.ConnectionConfig
+                {
+                    // 从配置文件读取连接字符串
+                    ConnectionString = $"server={sqlSugarConnection.Host}; port={sqlSugarConnection.Port}; user id={sqlSugarConnection.User}; password={sqlSugarConnection.Password}; database={sqlSugarConnection.Database};AllowLoadLocalInfile=true;",
+                    DbType = (DbType)sqlSugarConnection.DBType,
+                    IsAutoCloseConnection = true,
 
-            SqlSugarScope sqlClient = db.SqlClient ?? throw new Exception("sqlClient is null");
+                    InitKeyType = InitKeyType.Attribute // 通过特性识别主键和自增列
+                }
+            );
 
+           
 
             Dictionary<string, string> nameMapper = new Dictionary<string, string>();
             nameMapper.Add("partners", "PartnerEntity");

@@ -20,7 +20,6 @@ namespace LuoliDatabase.Entities
            /// Default:
            /// Nullable:False
            /// </summary>           
-           
            [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
            public long id {get;set;}
 
@@ -39,32 +38,25 @@ namespace LuoliDatabase.Entities
            public DateTime create_time {get;set;}
 
            /// <summary>
-           /// Desc:卡密32位哈希值
-           /// Default:
-           /// Nullable:False
-           /// </summary>           
-           public string coupon {get;set;}
-
-           /// <summary>
            /// Desc:平台代码：
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public string platform_code {get;set;}
-
-           /// <summary>
-           /// Desc:支付方式：EPaymentMethod
-           /// Default:
-           /// Nullable:True
-           /// </summary>           
-           public byte? payment_method {get;set;}
+           public string from_platform {get;set;}
 
            /// <summary>
            /// Desc:订单号
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public string order_no {get;set;}
+           public string tid {get;set;}
+
+           /// <summary>
+           /// Desc:卖家昵称
+           /// Default:
+           /// Nullable:False
+           /// </summary>           
+           public string seller_nick {get;set;}
 
            /// <summary>
            /// Desc:卖家id  也就是店铺id
@@ -78,7 +70,7 @@ namespace LuoliDatabase.Entities
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public string buyer_nick_name {get;set;}
+           public string buyer_nick {get;set;}
 
            /// <summary>
            /// Desc:买家id
@@ -102,11 +94,11 @@ namespace LuoliDatabase.Entities
            public decimal payment {get;set;}
 
            /// <summary>
-           /// Desc:订单状态：EOrderStatus
+           /// Desc:订单状态
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public byte status {get;set;}
+           public string status {get;set;}
 
            /// <summary>
            /// Desc:更新时间

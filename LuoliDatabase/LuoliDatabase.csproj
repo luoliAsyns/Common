@@ -3,6 +3,7 @@
     <ProjectReference Include="..\LuoliCommon\LuoliCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CSRedisCore" Version="3.8.806" />
     <PackageReference Include="Google.Protobuf" Version="3.32.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
