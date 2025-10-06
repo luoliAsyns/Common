@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using LuoliCommon.DTO.Coupon;
 
 namespace LuoliDatabase.Extensions
 {
@@ -41,6 +42,30 @@ namespace LuoliDatabase.Extensions
 
         }
 
+        public static CouponDTO ToCouponDTO(this ExternalOrderDTO dto)
+        {
+
+            if (dto is null)
+                return null;
+            // 映射属性（处理命名差异和类型转换）
+
+            var couponDTO = new CouponDTO();
+
+            couponDTO.ExternalOrderTid = dto.Tid;
+            couponDTO.ExternalOrderFromPlatform = dto.FromPlatform;
+
+            couponDTO.Payment = dto.PayAmount;
+            couponDTO.AvailableBalance = couponDTO.Payment;
+            
+            couponDTO.Status = ECouponStatus.Generated;
+            couponDTO.CreateTime = DateTime.Now;
+            couponDTO.UpdateTime = couponDTO.CreateTime;
+
+            return couponDTO;
+
+        }
+
+        
         public static (bool,string) Validate(this ExternalOrderDTO dto)
         {
 

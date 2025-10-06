@@ -38,18 +38,18 @@ namespace LuoliDatabase.Entities
            public string coupon {get;set;}
 
            /// <summary>
-           /// Desc:对应的外部订单的平台
+           /// Desc:对应的外部订单的平台名
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public long external_order_from_platform {get;set;}
+           public string external_order_from_platform {get;set;}
 
            /// <summary>
            /// Desc:对应的外部订单id
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public long external_order_tid {get;set;}
+           public string external_order_tid {get;set;}
 
            /// <summary>
            /// Desc:实付金额，和external order 中的payment一致

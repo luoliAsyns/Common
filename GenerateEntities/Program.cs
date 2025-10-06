@@ -46,12 +46,12 @@ namespace GenerateEntities
 
 
 
-            string dbConfigPath = @"/home/luoli/Desktop/code/Common/GenerateEntities/bin/Debug/net8.0/database.json";
-            string targetFolder = @"/home/luoli/Desktop/code/Common/LuoliDatabase/Entities";
+            string dbConfigPath = @"/home/luoli/Downloads/configs/master_db.json";
+            string targetFolder = @"/home/luoli/RiderProjects/Common/LuoliDatabase/Entities";
 
 
-            dbConfigPath = @"E:\Code\repos\ExternalOrderService\ExternalOrderService\bin\Debug\net8.0\debugConfigs\master_db.json";
-            targetFolder = @"E:\Code\repos\Common\LuoliDatabase\Entities";
+            // dbConfigPath = @"E:\Code\repos\ExternalOrderService\ExternalOrderService\bin\Debug\net8.0\debugConfigs\master_db.json";
+            // targetFolder = @"E:\Code\repos\Common\LuoliDatabase\Entities";
 
             var sqlSugarConnection =  new SqlSugarConnection(dbConfigPath);
 
@@ -74,6 +74,7 @@ namespace GenerateEntities
             Dictionary<string, string> nameMapper = new Dictionary<string, string>();
             nameMapper.Add("partners", "PartnerEntity");
             nameMapper.Add("coupon", "CouponEntity");
+            nameMapper.Add("customer", "CustomerEntity");
             nameMapper.Add("external_order", "ExternalOrderEntity");
             nameMapper.Add("sexytea_order", "SexyteaOrderEntity");
             nameMapper.Add("qrcode", "QRCodeEntity");
