@@ -11,7 +11,7 @@ namespace LuoliHelper.Utils
         public string Host { get; set; }
         public int Port { get; set; }
         public string UserId { get; set; }
-
+        public string Password { get; set; }
         public bool Persit { get; set; } = true;
 
         public RabbitMQConnection()
@@ -25,6 +25,7 @@ namespace LuoliHelper.Utils
             Host = rabbitMQConn.Host;
             Port = rabbitMQConn.Port;
             UserId = rabbitMQConn.UserId;
+            Password = rabbitMQConn.Password;
             Persit = rabbitMQConn.Persit;
         }
 
