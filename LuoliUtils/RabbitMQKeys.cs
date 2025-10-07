@@ -9,6 +9,8 @@ namespace  LuoliUtils
     public static class RabbitMQKeys
     {
         public static string ExternalOrderInserted = ":insert";
+        public static string CouponGenerated = "coupon:generated";
+        
         public static string ConsumeInfoInserted = ":consuming";
     }
 }

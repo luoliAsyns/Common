@@ -15,7 +15,8 @@ namespace LuoliCommon.Enums
         Consuming,
         [Description("已被BOT消费")]
         Consumed,
-        [Description("BOT消费失败，已回收")]
-        Recycled
+        [Description("已回收")]
+        Recycled,
+        
     }
 }
