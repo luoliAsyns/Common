@@ -140,7 +140,7 @@ namespace ThirdApis
                 Dictionary<string, dynamic> header = new(4);
                 header.Add("token", account.Token);
 
-                string bodyStr = Newtonsoft.Json.JsonConvert.SerializeObject(body, Newtonsoft.Json.Formatting.Indented); // 缩进格式便于调试
+                string bodyStr = JsonSerializer.Serialize(body); 
 
                 var response = await ApiCaller.PostAsync(R5_Url_OrderCreate, bodyStr, header);
 
