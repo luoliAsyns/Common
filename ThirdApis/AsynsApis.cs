@@ -11,6 +11,11 @@ namespace ThirdApis;
 public class AsynsApis
 {
 
+    private static JsonSerializerOptions _options = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true, // 关键配置：忽略大小写
+    };
+
     # region  external-order
     private string Url_ExternalOrder_Insert { get { return _targetIp + "api/external-order/insert"; } }
 
@@ -27,7 +32,7 @@ public class AsynsApis
     private string Url_Coupon_Query { get { return _targetIp + "api/coupon/query"; } }  
     private string Url_Coupon_PageQuery { get { return _targetIp + "api/coupon/page-query"; } }  
     private string Url_Coupon_Update { get { return _targetIp + "api/coupon/update"; } } 
-    private string Url_Coupon_Validate { get { return _targetIp + "api/coupon/valiadate"; } }  
+    private string Url_Coupon_Validate { get { return _targetIp + "api/coupon/validate"; } }  
     private string Url_Coupon_Invalidate { get { return _targetIp + "api/coupon/invalidate"; } }  
 
     #endregion
@@ -63,7 +68,7 @@ public class AsynsApis
                 return resp;
             }
 
-            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync(), _options);
 
             return successResp;
         }
@@ -99,7 +104,7 @@ public class AsynsApis
                 return resp;
             }
 
-            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync(), _options);
 
             return successResp;
         }
@@ -136,7 +141,7 @@ public class AsynsApis
                 return resp;
             }
             var resultStr = await response.Content.ReadAsStringAsync();
-            var successResp = JsonSerializer.Deserialize<ApiResponse<ExternalOrderDTO>>(resultStr);
+            var successResp = JsonSerializer.Deserialize<ApiResponse<ExternalOrderDTO>>(resultStr, _options);
 
             return successResp;
         }
@@ -172,7 +177,7 @@ public class AsynsApis
                 return resp;
             }
 
-            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync(), _options);
 
             return successResp;
         }
@@ -215,7 +220,7 @@ public class AsynsApis
                 return resp;
             }
             var resultStr = await response.Content.ReadAsStringAsync();
-            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr);
+            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr, _options);
 
             return successResp;
         }
@@ -232,6 +237,304 @@ public class AsynsApis
             return resp;
         }
     }
+
+
+    public async Task<ApiResponse<List<CouponDTO>>> CouponValidate(string[] coupons, byte? status)
+    {
+        try
+        {
+            if(coupons.Length==0)
+            {
+                var resp = new ApiResponse<List<CouponDTO>>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = "your input coupons length is 0";
+                return resp;
+            }
+
+            var url = $"{Url_Coupon_Validate}?status={status}&{string.Join("&",coupons.Select(cp=>"coupons="+cp))}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponValidate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<List<CouponDTO>>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<List<CouponDTO>>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponValidate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<List<CouponDTO>>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    public async Task<ApiResponse<bool>> CouponInvalidate(string coupon)
+    {
+        try
+        {
+            var url = Url_Coupon_Invalidate;
+            var bodystr = JsonSerializer.Serialize(new { coupon=coupon});
+            var response = await ApiCaller.PostAsync(url, bodystr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponInvalidate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponInvalidate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    public async Task<ApiResponse<PageResult<CouponDTO>>> CouponPageQuery( int page,
+        int size,
+        byte? status = null,
+        DateTime? from = null,
+        DateTime? to = null)
+    {
+        try
+        {
+            var url = $"{Url_Coupon_PageQuery}?page={page}&size={size}&status={status}&from={from}&to={to}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponPageQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<PageResult<CouponDTO>>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<PageResult<CouponDTO>>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponPageQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<PageResult<CouponDTO>>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    public async Task<ApiResponse<CouponDTO>> CouponGenerate(ExternalOrderDTO dto)
+    {
+        try
+        {
+            var url = Url_Coupon_Generate;
+            string bodyStr = JsonSerializer.Serialize(dto);
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponGenerate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<CouponDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponGenerate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<CouponDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    public async Task<ApiResponse<CouponDTO>> CouponGenerateManual(string from_platform, string tid, decimal amount)
+    {
+        try
+        {
+            var url = Url_Coupon_GenerateManual;
+
+            var bodyStr = JsonSerializer.Serialize(new
+            {
+                from_platform = from_platform,
+                tid = tid,
+                amount = amount
+            });
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponGenerateManual failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<CouponDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponGenerateManual failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<CouponDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    public async Task<ApiResponse<bool>> CouponDelete(string coupon)
+    {
+        try
+        {
+            var url = Url_Coupon_Delete;
+
+            var bodyStr = JsonSerializer.Serialize(new
+            {
+                coupon = coupon,
+            });
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponDelete failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponDelete failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<bool>> CouponUpdate(CouponDTO dto)
+    {
+        try
+        {
+            var url = Url_Coupon_Update;
+
+            var bodyStr = JsonSerializer.Serialize(dto);
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponUpdate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponUpdate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
 
 
     #endregion
