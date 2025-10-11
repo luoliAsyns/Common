@@ -1,6 +1,10 @@
-using System.Text.Json;
+using LuoliCommon.DTO.Coupon;
+using LuoliCommon.DTO.ExternalOrder;
+using LuoliCommon.DTO.Sexytea;
+using LuoliCommon.Entities;
 using LuoliCommon.Logger;
 using LuoliUtils;
+using System.Text.Json;
 
 namespace ThirdApis;
 
@@ -8,22 +12,23 @@ public class AsynsApis
 {
 
     # region  external-order
-    private string Url_ExternalOrder_Insert = "api/external-order/insert";
-    private string Url_ExternalOrder_Delete =  "api/external-order/delete";
-    private string Url_ExternalOrder_Query =  "api/external-order/query";
-    private string Url_ExternalOrder_Update =  "api/external-order/update";
+    private string Url_ExternalOrder_Insert { get { return _targetIp + "api/external-order/insert"; } }
+
+    private string Url_ExternalOrder_Delete { get { return _targetIp + "api/external-order/delete"; } }  
+    private string Url_ExternalOrder_Query { get { return _targetIp + "api/external-order/query"; } } 
+    private string Url_ExternalOrder_Update { get { return _targetIp + "api/external-order/update"; } } 
 
     #endregion
 
     #region coupon
-    private string Url_Coupon_Generate = "api/coupon/generate";
-    private string Url_Coupon_GenerateManual = "api/coupon/generate-manual";
-    private string Url_Coupon_Delete =  "api/coupon/delete";
-    private string Url_Coupon_Query =  "api/coupon/query";
-    private string Url_Coupon_PageQuery =  "api/coupon/page-query";
-    private string Url_Coupon_Update =  "api/coupon/update";
-    private string Url_Coupon_Validate =  "api/coupon/valiadate";
-    private string Url_Coupon_Invalidate =  "api/coupon/invalidate";
+    private string Url_Coupon_Generate { get { return _targetIp + "api/coupon/generate"; } }
+    private string Url_Coupon_GenerateManual { get { return _targetIp + "api/coupon/generate-manual"; } } 
+    private string Url_Coupon_Delete { get { return _targetIp + "api/coupon/delete"; } } 
+    private string Url_Coupon_Query { get { return _targetIp + "api/coupon/query"; } }  
+    private string Url_Coupon_PageQuery { get { return _targetIp + "api/coupon/page-query"; } }  
+    private string Url_Coupon_Update { get { return _targetIp + "api/coupon/update"; } } 
+    private string Url_Coupon_Validate { get { return _targetIp + "api/coupon/valiadate"; } }  
+    private string Url_Coupon_Invalidate { get { return _targetIp + "api/coupon/invalidate"; } }  
 
     #endregion
 
@@ -31,60 +36,213 @@ public class AsynsApis
 
     private readonly ILogger _logger;
 
-    public AsynsApis(ILogger logger, string ip = "http://115.190.168.53/")
+    public AsynsApis(ILogger logger, string ip)
     {
         _logger = logger;
         _targetIp = ip;
     }
 
-    public async Task<(bool, string)> SendWWMsg(string accessToken, string appSecret, long tid, string message)
+    #region ExternalOrderService
+    public async Task<ApiResponse<bool>> ExternalOrderInsert(ExternalOrderDTO dto)
     {
-
-        Dictionary<string, dynamic> header = new();
-        header["ContentType"] = "application/x-www-form-urlencoded";
-        header["Authorization"] = "Bearer " + accessToken;
-        header["ApiVersion"] = "1";
-
-
-        //业务参数
-        TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-        var body = new Dictionary<string, string>() { };
-
-        // 订单号
-        body.Add("tid", tid.ToString());
-        // 发送给买家的内容
-        body.Add("msg", message);
-
-        body.Add("timestamp", Convert.ToInt64(ts.TotalSeconds).ToString());
-        body.Add("sign", Sign(body, appSecret));
-
-
-        bool success = false;
-        string msg = string.Empty;
-
-        Action sendWWMsg = () =>
+        try
         {
-            string respStr = ApiCaller.PostAsync(
-                Url_SendWWMsg,
-                ConvertBody2String(body),
-                header, isFormUrlEncode: true).Result.Content.ReadAsStringAsync().Result;
+            string bodyStr = JsonSerializer.Serialize(dto);
 
-            // 请求成功后，取isSuccess  成功了就算了，没成功取 Error_Msg
-            JsonDocument responseObj = JsonDocument.Parse(respStr);
-            success = responseObj.RootElement.GetProperty("IsSuccess").GetBoolean();
+            var response = await ApiCaller.PostAsync(Url_ExternalOrder_Insert, bodyStr);
 
-            if (!success)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                _logger.Error($"AgisoApis.SendWWMsg failed, full response:[{respStr}]");
-                msg = responseObj.RootElement.GetProperty("Error_Msg").GetString();
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ExternalOrderInsert failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
             }
-        };
 
-        await ActionsOperator.ReTryAction(sendWWMsg);
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
 
-        return (success, msg);
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ExternalOrderInsert failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<bool>> ExternalOrderDelete(DeleteRequest dq)
+    {
+        try
+        {
+            string bodyStr = JsonSerializer.Serialize(dq);
+
+            var response = await ApiCaller.PostAsync(Url_ExternalOrder_Delete, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _logger.Error($"AsynsApis.ExternalOrderDelete failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = "未知异常，可能网络波动";
+                return resp;
+            }
+
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ExternalOrderDelete failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<ExternalOrderDTO>> ExternalOrderQuery(string from_platform, string tid)
+    {
+        try
+        {
+            var url = $"{Url_ExternalOrder_Query}?from_platform={from_platform}&tid={tid}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ExternalOrderQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<ExternalOrderDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<ExternalOrderDTO>>(resultStr);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ExternalOrderQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<ExternalOrderDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<bool>> ExternalOrderUpdate(ExternalOrderDTO dto)
+    {
+        try
+        {
+            string bodyStr = JsonSerializer.Serialize(dto);
+
+            var response = await ApiCaller.PostAsync(Url_ExternalOrder_Update, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _logger.Error($"AsynsApis.ExternalOrderUpdate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = "未知异常，可能网络波动";
+                return resp;
+            }
+
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(await response.Content.ReadAsStringAsync());
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ExternalOrderUpdate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
     }
 
 
+    #endregion
+
+
+    #region CouponService
+
+    public async Task<ApiResponse<CouponDTO>> CouponQuery(string coupon)
+    {
+        try
+        {
+            var url = $"{Url_Coupon_Query}?coupon={coupon}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<CouponDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<CouponDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+    #endregion
+
+    #region 1
+    #endregion
+
+
+    #region 2
+    #endregion
+
+    #region 3
+    #endregion
 }
