@@ -68,8 +68,20 @@ namespace LuoliDatabase.Extensions
         
         public static (bool,string) Validate(this ExternalOrderDTO dto)
         {
+            if (string.IsNullOrEmpty(dto.FromPlatform))
+                return (false, "FromPlatform is required");
 
-            return (true,string.Empty);
+            if (string.IsNullOrEmpty(dto.Tid))
+                return (false, "Tid is required");
+
+            if (dto.PayAmount <= 0)
+                return (false, "PayAmount must be greater than 0");
+
+            if (dto.ExternalOrderItems.Count == 0)
+                return (false, "ExternalOrderItems count must be greater than 0");
+
+            return (true, string.Empty);
+
         }
     }
 }

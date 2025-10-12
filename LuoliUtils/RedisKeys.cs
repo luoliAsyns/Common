@@ -7,5 +7,6 @@
         public static string BranchId2City = "sexytea.branchid2city";
 
         public static string CouponChanged = "coupon.status.changed";
+      
     }
 }

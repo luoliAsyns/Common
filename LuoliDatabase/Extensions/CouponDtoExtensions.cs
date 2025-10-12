@@ -40,7 +40,23 @@ namespace LuoliDatabase.Extensions
         public static (bool,string) Validate(this CouponDTO dto)
         {
 
-            return (true,string.Empty);
+            if (string.IsNullOrEmpty(dto.Coupon))
+                return (false, "Coupon is required");
+
+            if (string.IsNullOrEmpty(dto.ExternalOrderFromPlatform))
+                return (false, "ExternalOrderFromPlatform is required");
+           
+            if (string.IsNullOrEmpty(dto.ExternalOrderTid))
+                return (false, "ExternalOrderTid is required");
+
+            if (dto.AvailableBalance <= 0)
+                return (false, "AvailableBalance  must be greater than 0");
+
+            if (dto.Payment <= 0)
+                return (false, "PayAmount must be greater than 0");
+
+           
+            return (true, string.Empty);
         }
     }
 }

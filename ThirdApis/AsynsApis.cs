@@ -18,7 +18,6 @@ public class AsynsApis
 
     # region  external-order
     private string Url_ExternalOrder_Insert { get { return _targetIp + "api/external-order/insert"; } }
-
     private string Url_ExternalOrder_Delete { get { return _targetIp + "api/external-order/delete"; } }  
     private string Url_ExternalOrder_Query { get { return _targetIp + "api/external-order/query"; } } 
     private string Url_ExternalOrder_Update { get { return _targetIp + "api/external-order/update"; } } 
