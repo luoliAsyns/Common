@@ -43,6 +43,37 @@ namespace LuoliHelper.StaticClasses
             return dict;
         }
 
+        public static bool TryParseIgnoringCaseAndSpaces<T>(string input, out T result) where T : struct, Enum
+        {
+            // 初始化结果为默认值
+            result = default;
+
+            // 处理空输入
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            // 移除所有空格并转换为大写
+            string processedInput = input.Replace(" ", "").ToUpperInvariant();
+
+            // 获取枚举的所有名称
+            string[] enumNames = Enum.GetNames(typeof(T));
+
+            // 查找匹配的枚举名称（忽略大小写和空格）
+            foreach (string name in enumNames)
+            {
+                string processedName = name.Replace(" ", "").ToUpperInvariant();
+                if (processedName == processedInput)
+                {
+                    // 找到匹配项，进行转换
+                    result = (T)Enum.Parse(typeof(T), name);
+                    return true;
+                }
+            }
+
+            // 未找到匹配项
+            return false;
+        }
+
 
         // 获取枚举值的Description特性
         public static string GetDescription<T>(T enumValue) where T : struct, Enum

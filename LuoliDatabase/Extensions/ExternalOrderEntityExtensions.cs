@@ -1,6 +1,7 @@
 ﻿using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Enums;
 using LuoliDatabase.Entities;
+using LuoliHelper.StaticClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,10 @@ namespace LuoliDatabase
                 return null;
 
             var dto = new ExternalOrderDTO();
+            if (!EnumOperator.TryParseIgnoringCaseAndSpaces(entity.target_proxy, out ETargetProxy targetProxy))
+                return null;
+                
+            dto.TargetProxy = targetProxy;
             dto.CreateTime = entity.create_time;
             dto.UpdateTime = entity.update_time;
             dto.ExternalOrderItems = new List<ExternalOrderItem>();

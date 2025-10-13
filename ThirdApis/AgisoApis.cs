@@ -1,8 +1,13 @@
-﻿using LuoliCommon.Logger;
+﻿using LuoliCommon.DTO.Agiso;
+using LuoliCommon.Logger;
 using LuoliUtils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web;
 
 namespace ThirdApis
@@ -10,12 +15,14 @@ namespace ThirdApis
     public  class AgisoApis
     {
 
-      
+
         // 给买家发送旺旺消息
-        private  string Url_SendWWMsg = "http://gw.api.agiso.com/alds/WwMsg/Send";
+        private string Url_SendWWMsg = "http://gw.api.agiso.com/alds/WwMsg/Send";
 
         // 发货
-        private  string Url_ShipOrder = "http://gw.api.agiso.com/alds/Trade/LogisticsDummySend";
+        private string Url_ShipOrder = "http://gw.api.agiso.com/alds/Trade/LogisticsDummySend";
+
+        private string Url_TradeInfo = "http://gw.api.agiso.com/alds/Trade/TradeInfo";
 
 
         private readonly ILogger _logger;
@@ -24,6 +31,8 @@ namespace ThirdApis
             _logger = logger;
         }
 
+
+        //发送旺旺消息
         public  async Task<(bool, string)> SendWWMsg(string accessToken, string appSecret, long tid, string message)
         {
 
@@ -72,6 +81,7 @@ namespace ThirdApis
             return (success, msg);
         }
 
+        //发货
         public  async Task<(bool, string)> ShipOrder(string accessToken, string appSecret, string tids)
         {
             Dictionary<string, dynamic> header = new();
@@ -96,7 +106,7 @@ namespace ThirdApis
             {
                 string respStr = ApiCaller.PostAsync(
                     Url_ShipOrder,
-                    JsonSerializer.Serialize(body),
+                    System.Text.Json.JsonSerializer.Serialize(body),
                     header).Result.Content.ReadAsStringAsync().Result;
 
                 // 请求成功后，取QTY赋值
@@ -116,10 +126,115 @@ namespace ThirdApis
         }
 
 
-     
+        //获取订单详情
+
+        public async Task<(bool, JsonDocument)> TradeInfo(string accessToken, string appSecret, string tid)
+        {
+            Dictionary<string, dynamic> header = new();
+
+            header.Add("Authorization", "Bearer " + accessToken);
+            header.Add("ApiVersion", "1");
+
+            //业务参数
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+            var body = new Dictionary<string, string>() { };
+            //订单编号
+            body.Add("tid", tid);
+            body.Add("timestamp", Convert.ToInt64(ts.TotalSeconds).ToString());
+            body.Add("sign", Sign(body, appSecret));
 
 
-        private  string ConvertBody2String(Dictionary<string, string> body)
+            bool success = false;
+            JsonDocument responseObj= null;
+
+            Action getTradeInfo = () =>
+            {
+                string respStr = ApiCaller.PostAsync(
+                    Url_TradeInfo,
+                    System.Text.Json.JsonSerializer.Serialize(body),
+                    header).Result.Content.ReadAsStringAsync().Result;
+
+                // 请求成功后，取QTY赋值
+                responseObj = JsonDocument.Parse(respStr);
+                success = responseObj.RootElement.GetProperty("IsSuccess").GetBoolean();
+
+                if (!success)
+                    _logger.Error($"AgisoApis.TradeInfo failed, tid:[{tid}], Error_Msg:[{responseObj.RootElement.GetProperty("Error_Msg").GetString()}]");
+            };
+
+            await ActionsOperator.ReTryAction(getTradeInfo);
+
+            return (success, responseObj);
+        }
+
+
+
+        public async Task<(bool, string, OrderCreateRequest)> ValidateOrderCreateAsync(HttpRequest request,string rawJson)
+        {
+            // 提取并验证Timestamp
+            if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
+                !long.TryParse(timestampValue, out long timestamp))
+                return (false, "no Timestamp" , null);
+
+            // 提取并验证Aopic
+            if (!request.Query.TryGetValue("Aopic", out var aopicValue) ||
+                !long.TryParse(aopicValue, out long aopic))
+                return (false, "no Aopic", null);
+          
+
+            // 提取并验证Sign
+            if (!request.Query.TryGetValue("Sign", out var signValue) ||
+                string.IsNullOrWhiteSpace(signValue))
+                return (false, "no Sign", null);
+
+
+            // 提取并验证FromPlatform
+            if (!request.Query.TryGetValue("FromPlatform", out var fromPlatformValue) ||
+                string.IsNullOrWhiteSpace(fromPlatformValue))
+                return (false, "no FromPlatform", null);
+
+
+
+           
+
+            // 4. 反序列化为OrderCreateRequest对象
+            OrderCreateRequest orderCreateDto;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    FloatParseHandling = FloatParseHandling.Decimal,
+                    Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
+                };
+
+                orderCreateDto = JsonConvert.DeserializeObject<OrderCreateRequest>(rawJson, settings);
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                return (false, $"body format not correct: {ex.Message}", null);
+            }
+
+            orderCreateDto.Sign = signValue;
+            orderCreateDto.Timestamp = timestamp;
+            orderCreateDto.Aopic = aopic;
+            orderCreateDto.FromPlatform = fromPlatformValue;
+
+
+            return (true, "", orderCreateDto);
+        }
+
+        public bool ValidateSign(OrderCreateRequest dto, string rawJson, string appSecret)
+        {
+            var dictParams = new Dictionary<string, string>();
+            dictParams.Add("timestamp", dto.Timestamp.ToString());
+            dictParams.Add("json", rawJson);
+            //参考签名算法
+            var checkSign = Sign(dictParams, appSecret);
+            return string.Equals(checkSign, dto.Sign);
+        }
+
+        private string ConvertBody2String(Dictionary<string, string> body)
         {
             string postData = "";
             foreach (var p in body)

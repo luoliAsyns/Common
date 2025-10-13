@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\LuoliCommon\LuoliCommon.csproj" />
+    <ProjectReference Include="..\LuoliUtils\LuoliUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CSRedisCore" Version="3.8.806" />

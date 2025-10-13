@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using LuoliCommon.DTO.Coupon;
+using LuoliHelper.StaticClasses;
 
 namespace LuoliDatabase.Extensions
 {
@@ -23,6 +24,7 @@ namespace LuoliDatabase.Extensions
 
             var entity = new ExternalOrderEntity();
 
+            entity.target_proxy = dto.TargetProxy.ToString();
             entity.tid = dto.Tid;
             entity.payment = dto.PayAmount;
             entity.status = dto.Status;

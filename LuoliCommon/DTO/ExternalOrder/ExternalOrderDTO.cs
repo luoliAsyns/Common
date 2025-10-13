@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using LuoliCommon.Enums;
+using ProtoBuf;
 using System;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,9 @@ namespace LuoliCommon.DTO.ExternalOrder
         /// 参数值：TbAcs,TbAlds,TbArs,Print,Acpr,PddAlds,AldsIdle,AldsJd,AldsDoudian,AldsKwai,AldsYouzan,AldsWeidian,AldsWxVideoShop,AldsXhs
         /// </summary>
         public string FromPlatform { get; set; }
+
+
+        public ETargetProxy TargetProxy { get; set; }
 
         /// <summary>
         /// 支付金额
