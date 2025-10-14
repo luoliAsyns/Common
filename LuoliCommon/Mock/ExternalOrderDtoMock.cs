@@ -69,7 +69,7 @@ namespace LuoliCommon.Mock
                     Type = _types[_random.Next(_types.Count)],
                     CreateTime = createTime,
                     UpdateTime = updateTime,
-                    ExternalOrderItems = GenerateOrderItems(_random.Next(minItems, maxItems + 1))
+                    Order = new DTO.Agiso.Order()
                 });
             }
 
@@ -114,23 +114,6 @@ namespace LuoliCommon.Mock
             return $"{prefix}{DateTime.Now.Year}{_random.Next(10000000, 99999999)}";
         }
 
-        /// <summary>
-        /// 生成订单项
-        /// </summary>
-        private static List<ExternalOrderItem> GenerateOrderItems(int count)
-        {
-            var items = new List<ExternalOrderItem>();
-
-            for (int i = 0; i < count; i++)
-            {
-                items.Add(new ExternalOrderItem
-                {
-                    Id = $"{_random.Next(100000, 999999)}",
-                });
-            }
-
-            return items;
-        }
 
         /// <summary>
         /// 生成商品标题

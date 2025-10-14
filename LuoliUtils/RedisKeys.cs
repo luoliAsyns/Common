@@ -2,6 +2,10 @@
 {
     public static class RedisKeys
     {
+
+        //hashtable
+        public static string SkuId2Proxy = "skuid2proxy";
+
         public static string ReceivedExternalOrder = "received.external.orders";
 
         public static string NotUsedCoupons = "notused.coupons";

@@ -1,4 +1,5 @@
-﻿using LuoliCommon.DTO.ExternalOrder;
+﻿using LuoliCommon.DTO.Agiso;
+using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Enums;
 using LuoliDatabase.Entities;
 using LuoliHelper.StaticClasses;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LuoliDatabase
@@ -27,7 +29,7 @@ namespace LuoliDatabase
             dto.TargetProxy = targetProxy;
             dto.CreateTime = entity.create_time;
             dto.UpdateTime = entity.update_time;
-            dto.ExternalOrderItems = new List<ExternalOrderItem>();
+            dto.Order = JsonSerializer.Deserialize<Order>(entity.content);
             dto.PayAmount = entity.payment;
 
             dto.FromPlatform = entity.from_platform;

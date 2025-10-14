@@ -9,7 +9,7 @@ namespace  LuoliUtils
     public static class RabbitMQKeys
     {
         //例如  sexytea:insert
-        public static string ExternalOrderInserting = ":inserting";
+        public static string ExternalOrderInserting = "external-order.inserting";
         public static string ExternalOrderInserted = ":inserted"; 
 
         public static string CouponGenerated = "coupon:generated";

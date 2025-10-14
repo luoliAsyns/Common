@@ -33,14 +33,14 @@ namespace LuoliUtils
         }
 
 
-        public static async Task<bool> ReTryAction(Action business, int retryCount = 3, int waitMs = 200)
+        public static async Task<bool> ReTryAction(Func<Task> business, int retryCount = 3, int waitMs = 200)
         {
 
             try
             {
-                Policy
+              await  Policy
                     .Handle<Exception>() // 捕获所有异常，可以指定具体异常类型如HttpRequestException
-                    .WaitAndRetry(
+                    .WaitAndRetryAsync(
                         retryCount: retryCount, // 重试次数
                         sleepDurationProvider: retryAttempt => TimeSpan.FromMilliseconds(waitMs), // 每次重试前等待200ms
                         onRetry: (exception, timespan, retryAttempt, context) =>
@@ -48,7 +48,7 @@ namespace LuoliUtils
                             _logger.Warn($"第 {retryAttempt} 次重试，等待 {timespan.TotalMilliseconds} ms，错误：{exception.Message}");
                         }
 
-                     ).Execute(() => { business(); });
+                     ).ExecuteAsync(() =>  business() );
 
                 return true;
             }

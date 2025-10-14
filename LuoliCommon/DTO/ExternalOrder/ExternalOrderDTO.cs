@@ -1,4 +1,5 @@
-﻿using LuoliCommon.Enums;
+﻿using LuoliCommon.DTO.Agiso;
+using LuoliCommon.Enums;
 using ProtoBuf;
 using System;
 using System.Linq;
@@ -78,7 +79,7 @@ namespace LuoliCommon.DTO.ExternalOrder
         /// <summary>
         /// 订单项列表
         /// </summary>
-        public List<ExternalOrderItem> ExternalOrderItems { get; set; } = new List<ExternalOrderItem>();
+        public Order Order { get; set; }
     }
 
     

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LuoliUtils
@@ -78,13 +79,7 @@ namespace LuoliUtils
                     {
                         // 处理form-urlencoded格式
                         // 假设data是"key1=value1&key2=value2"格式的字符串
-                        var keyValuePairs = data.Split('&')
-                            .Select(pair => pair.Split('='))
-                            .Where(parts => parts.Length == 2)
-                            .ToDictionary(
-                                parts => Uri.UnescapeDataString(parts[0]),
-                                parts => Uri.UnescapeDataString(parts[1])
-                            );
+                        var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, string>>(data);
 
                         request.Content = new FormUrlEncodedContent(keyValuePairs);
                     }

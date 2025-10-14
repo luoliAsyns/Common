@@ -33,14 +33,11 @@ namespace ThirdApis
 
 
         //发送旺旺消息
-        public  async Task<(bool, string)> SendWWMsg(string accessToken, string appSecret, long tid, string message)
+        public  async Task<(bool, string)> SendWWMsg(string accessToken, string appSecret, string tid, string message)
         {
-
             Dictionary<string, dynamic> header = new();
-            header["ContentType"] = "application/x-www-form-urlencoded";
             header["Authorization"] = "Bearer " + accessToken;
             header["ApiVersion"] =  "1";
-
 
             //业务参数
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -48,10 +45,8 @@ namespace ThirdApis
             var body = new Dictionary<string, string>() { };
 
             // 订单号
-            body.Add("tid", tid.ToString());
-            // 发送给买家的内容
+            body.Add("tid", tid);
             body.Add("msg", message);
-
             body.Add("timestamp", Convert.ToInt64(ts.TotalSeconds).ToString());
             body.Add("sign", Sign(body, appSecret));
       
@@ -59,11 +54,12 @@ namespace ThirdApis
             bool success = false;
             string msg =string .Empty;
 
-            Action sendWWMsg = () => {
-                string respStr = ApiCaller.PostAsync(
-                    Url_SendWWMsg,
-                    ConvertBody2String(body), 
-                    header, isFormUrlEncode:true).Result.Content.ReadAsStringAsync().Result;
+            Func<Task> sendWWMsg = async () => {
+                var resp = await ApiCaller.PostAsync(
+                     Url_SendWWMsg,
+                     System.Text.Json.JsonSerializer.Serialize(body),
+                     header, true);
+                string respStr = await resp.Content.ReadAsStringAsync();
 
                 // 请求成功后，取isSuccess  成功了就算了，没成功取 Error_Msg
                 JsonDocument responseObj = JsonDocument.Parse(respStr);
@@ -102,12 +98,14 @@ namespace ThirdApis
             bool success = false;
             string msg = string.Empty;
 
-            Action sendShipOrder = () =>
+            Func<Task> sendShipOrder = async () =>
             {
-                string respStr = ApiCaller.PostAsync(
+
+                var resp = await ApiCaller.PostAsync(
                     Url_ShipOrder,
                     System.Text.Json.JsonSerializer.Serialize(body),
-                    header).Result.Content.ReadAsStringAsync().Result;
+                    header, true);
+                string respStr = await resp.Content.ReadAsStringAsync();
 
                 // 请求成功后，取QTY赋值
                 JsonDocument responseObj = JsonDocument.Parse(respStr);
@@ -148,12 +146,14 @@ namespace ThirdApis
             bool success = false;
             JsonDocument responseObj= null;
 
-            Action getTradeInfo = () =>
+            Func<Task> getTradeInfo =async () =>
             {
-                string respStr = ApiCaller.PostAsync(
+                var resp = await ApiCaller.PostAsync(
                     Url_TradeInfo,
-                    System.Text.Json.JsonSerializer.Serialize(body),
-                    header).Result.Content.ReadAsStringAsync().Result;
+                     System.Text.Json.JsonSerializer.Serialize(body),
+                    header, true);
+
+                string respStr = await resp.Content.ReadAsStringAsync();
 
                 // 请求成功后，取QTY赋值
                 responseObj = JsonDocument.Parse(respStr);
@@ -161,6 +161,8 @@ namespace ThirdApis
 
                 if (!success)
                     _logger.Error($"AgisoApis.TradeInfo failed, tid:[{tid}], Error_Msg:[{responseObj.RootElement.GetProperty("Error_Msg").GetString()}]");
+                else
+                    File.WriteAllText("tradeinfo", respStr);
             };
 
             await ActionsOperator.ReTryAction(getTradeInfo);

@@ -18,22 +18,46 @@ public class AsynsApis
     };
 
     # region  external-order
-    private string Url_ExternalOrder_Insert { get { return _targetIp + "api/external-order/insert"; } }
-    private string Url_ExternalOrder_Delete { get { return _targetIp + "api/external-order/delete"; } }  
-    private string Url_ExternalOrder_Query { get { return _targetIp + "api/external-order/query"; } } 
-    private string Url_ExternalOrder_Update { get { return _targetIp + "api/external-order/update"; } } 
+
+    private string Url_ExternalOrder
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_targetIp))
+                return "http://external-order-service:8080/";
+            else
+                return _targetIp;
+        }
+    }
+    
+    private string Url_ExternalOrder_Insert { get { return Url_ExternalOrder + "api/external-order/insert"; } }
+    private string Url_ExternalOrder_Delete { get { return Url_ExternalOrder + "api/external-order/delete"; } }  
+    private string Url_ExternalOrder_Query { get { return Url_ExternalOrder + "api/external-order/query"; } } 
+    private string Url_ExternalOrder_Update { get { return Url_ExternalOrder + "api/external-order/update"; } }
 
     #endregion
 
     #region coupon
-    private string Url_Coupon_Generate { get { return _targetIp + "api/coupon/generate"; } }
-    private string Url_Coupon_GenerateManual { get { return _targetIp + "api/coupon/generate-manual"; } } 
-    private string Url_Coupon_Delete { get { return _targetIp + "api/coupon/delete"; } } 
-    private string Url_Coupon_Query { get { return _targetIp + "api/coupon/query"; } }  
-    private string Url_Coupon_PageQuery { get { return _targetIp + "api/coupon/page-query"; } }  
-    private string Url_Coupon_Update { get { return _targetIp + "api/coupon/update"; } } 
-    private string Url_Coupon_Validate { get { return _targetIp + "api/coupon/validate"; } }  
-    private string Url_Coupon_Invalidate { get { return _targetIp + "api/coupon/invalidate"; } }  
+
+
+    private string Url_Coupon
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_targetIp))
+                return "http://coupon-service:8080/";
+            else
+                return _targetIp;
+        }
+    }
+    private string Url_Coupon_Generate { get { return Url_Coupon + "api/coupon/generate"; } }
+    private string Url_Coupon_GenerateManual { get { return Url_Coupon + "api/coupon/generate-manual"; } } 
+    private string Url_Coupon_Delete { get { return Url_Coupon + "api/coupon/delete"; } } 
+    private string Url_Coupon_Query { get { return Url_Coupon + "api/coupon/query"; } }  
+    private string Url_Coupon_PageQuery { get { return Url_Coupon + "api/coupon/page-query"; } }  
+    private string Url_Coupon_Update { get { return Url_Coupon + "api/coupon/update"; } } 
+    private string Url_Coupon_Validate { get { return Url_Coupon + "api/coupon/validate"; } }  
+    private string Url_Coupon_Invalidate { get { return Url_Coupon + "api/coupon/invalidate"; } }  
 
     #endregion
 

@@ -30,7 +30,7 @@ namespace LuoliDatabase.Extensions
             entity.status = dto.Status;
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
-            entity.content = JsonSerializer.Serialize( dto.ExternalOrderItems);
+            entity.content = JsonSerializer.Serialize(dto.Order);
           
             entity.buyer_nick = dto.BuyerNick;
             entity.buyer_open_uid = dto.BuyerOpenUid;
@@ -38,7 +38,7 @@ namespace LuoliDatabase.Extensions
             entity.seller_open_uid=dto.SellerOpenUid;
 
             entity.from_platform = dto.FromPlatform;
-            entity.target_proxy = "sexytea"; // 这里应该通过 dto.ExternalOrderItems 计算
+            entity.target_proxy = dto.TargetProxy.ToString();
 
             return entity;
 
@@ -79,8 +79,8 @@ namespace LuoliDatabase.Extensions
             if (dto.PayAmount <= 0)
                 return (false, "PayAmount must be greater than 0");
 
-            if (dto.ExternalOrderItems.Count == 0)
-                return (false, "ExternalOrderItems count must be greater than 0");
+            if (dto.Order is null)
+                return (false, "ExternalOrderDTO.Order cannot be null");
 
             return (true, string.Empty);
 
