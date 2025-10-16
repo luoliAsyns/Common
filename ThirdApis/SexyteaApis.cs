@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using LuoliCommon.DTO.Sexytea;
 using LuoliUtils;
 using LuoliCommon.Logger;
+using LuoliCommon.DTO.ConsumeInfo.Sexytea;
 
 namespace ThirdApis
 {

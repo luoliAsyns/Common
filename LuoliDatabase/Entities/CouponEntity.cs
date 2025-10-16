@@ -38,7 +38,7 @@ namespace LuoliDatabase.Entities
            public string coupon {get;set;}
 
            /// <summary>
-           /// Desc:对应的外部订单的平台名
+           /// Desc:对应的外部订单的平台
            /// Default:
            /// Nullable:False
            /// </summary>           

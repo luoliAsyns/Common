@@ -35,7 +35,7 @@ namespace LuoliDatabase
 
             dto.FromPlatform = entity.from_platform;
             dto.Tid = entity.tid;
-            dto.Status = (EPlatformOrderStatus)Enum.Parse(typeof(EPlatformOrderStatus), entity.status );
+            dto.Status = (EPlatformOrderStatus)entity.status;
 
             dto.SellerNick = entity.seller_nick;
             dto.SellerOpenUid = entity.seller_open_uid;

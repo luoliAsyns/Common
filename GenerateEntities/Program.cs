@@ -50,11 +50,10 @@ namespace GenerateEntities
             string targetFolder = @"/home/luoli/RiderProjects/Common/LuoliDatabase/Entities";
 
 
-            // dbConfigPath = @"E:\Code\repos\ExternalOrderService\ExternalOrderService\bin\Debug\net8.0\debugConfigs\master_db.json";
-            // targetFolder = @"E:\Code\repos\Common\LuoliDatabase\Entities";
+            dbConfigPath = @"E:\Code\repos\AgenterBackend\ExternalOrderService\bin\Debug\net8.0\debugConfigs\master_db.json";
+            targetFolder = @"E:\Code\repos\Common\LuoliDatabase\Entities";
 
             var sqlSugarConnection =  new SqlSugarConnection(dbConfigPath);
-
 
 
 
@@ -73,15 +72,18 @@ namespace GenerateEntities
 
             Dictionary<string, string> nameMapper = new Dictionary<string, string>();
             nameMapper.Add("partners", "PartnerEntity");
-            nameMapper.Add("coupon", "CouponEntity");
-            nameMapper.Add("customer", "CustomerEntity");
-            nameMapper.Add("external_order", "ExternalOrderEntity");
-            nameMapper.Add("sexytea_order", "SexyteaOrderEntity");
-            nameMapper.Add("qrcode", "QRCodeEntity");
-            nameMapper.Add("orders", "OrderEntity");
             nameMapper.Add("products", "ProductEntity");
             nameMapper.Add("questions", "QuestionEntity");
             nameMapper.Add("users", "UserEntity");
+
+
+            nameMapper.Add("coupon", "CouponEntity");
+            nameMapper.Add("external_order", "ExternalOrderEntity");
+            nameMapper.Add("sexytea_consume_info", "ConsumeInfoEntity");
+            nameMapper.Add("qrcode", "QRCodeEntity");
+            nameMapper.Add("orders", "OrderEntity");
+            nameMapper.Add("customer", "CustomerEntity");
+
 
             Func<string, string> tableNameFunc = (old) =>
             {

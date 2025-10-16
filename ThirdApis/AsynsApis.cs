@@ -1,6 +1,5 @@
 using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
-using LuoliCommon.DTO.Sexytea;
 using LuoliCommon.Entities;
 using LuoliCommon.Logger;
 using LuoliUtils;
@@ -565,7 +564,6 @@ public class AsynsApis
 
     #region 1
     #endregion
-
 
     #region 2
     #endregion

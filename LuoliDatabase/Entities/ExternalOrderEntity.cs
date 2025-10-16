@@ -61,7 +61,7 @@ namespace LuoliDatabase.Entities
            /// <summary>
            /// Desc:卖家id  也就是店铺id
            /// Default:
-           /// Nullable:False
+           /// Nullable:True
            /// </summary>           
            public string seller_open_uid {get;set;}
 
@@ -94,11 +94,11 @@ namespace LuoliDatabase.Entities
            public decimal payment {get;set;}
 
            /// <summary>
-           /// Desc:订单状态
+           /// Desc: EPlatformOrderStatus 订单状态
            /// Default:
            /// Nullable:False
            /// </summary>           
-           public string status {get;set;}
+           public byte status {get;set;}
 
            /// <summary>
            /// Desc:更新时间

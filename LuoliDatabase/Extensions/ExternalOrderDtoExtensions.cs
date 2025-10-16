@@ -26,7 +26,7 @@ namespace LuoliDatabase.Extensions
             entity.target_proxy = dto.TargetProxy.ToString();
             entity.tid = dto.Tid;
             entity.payment = dto.PayAmount;
-            entity.status = dto.Status.ToString();
+            entity.status = ( byte)dto.Status;
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
             entity.content = JsonSerializer.Serialize(dto.SubOrders);

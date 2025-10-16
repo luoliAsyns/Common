@@ -10,9 +10,12 @@ namespace  LuoliUtils
     {
         //例如  sexytea:insert
         public static string ExternalOrderInserting = "external-order.inserting";
-        public static string ExternalOrderInserted = ":inserted"; 
+        public static string ExternalOrderInserted = "external-order:inserted"; 
 
         public static string CouponGenerated = "coupon:generated";
-        public static string ConsumeInfoInserted = ":consuming";
+
+
+        public static string ConsumeInfoInserting = "consume-info:inserting";
+        public static string ConsumeInfoInserted = "consume-info:inserted";
     }
 }
