@@ -26,7 +26,7 @@ namespace LuoliDatabase.Extensions
             entity.target_proxy = dto.TargetProxy.ToString();
             entity.tid = dto.Tid;
             entity.payment = dto.PayAmount;
-            entity.status = dto.Status;
+            entity.status = dto.Status.ToString();
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
             entity.content = JsonSerializer.Serialize(dto.SubOrders);
@@ -88,5 +88,19 @@ namespace LuoliDatabase.Extensions
             return (true, string.Empty);
 
         }
+        public static (bool, string) ValidateBeforeGenCoupon(this ExternalOrderDTO dto)
+        {
+
+            if (dto.Status == EPlatformOrderStatus.Refunding)
+                return (false, "平台订单处于退款中");
+
+            if (dto.Status == EPlatformOrderStatus.Shipped)
+                return (false, "平台订单已下单，不应该再生成coupon");
+
+            return (true, string.Empty);
+
+        }
+        
+
     }
 }

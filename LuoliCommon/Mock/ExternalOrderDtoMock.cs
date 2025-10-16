@@ -1,4 +1,5 @@
 ﻿using LuoliCommon.DTO.ExternalOrder;
+using LuoliCommon.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,12 @@ namespace LuoliCommon.Mock
     };
 
         // 订单状态列表
-        private static readonly List<string> _statuses = new List<string>
+        private static readonly List<EPlatformOrderStatus> _statuses = new List<EPlatformOrderStatus>
     {
-        "WAIT_PAY", "PAID", "SHIPPED", "RECEIVED", "CANCELED", "REFUNDED"
+         EPlatformOrderStatus.Pulled,
+            EPlatformOrderStatus.Shipped,
+             EPlatformOrderStatus.Refunding,
+              EPlatformOrderStatus.Placed
     };
 
         // 交易类型列表

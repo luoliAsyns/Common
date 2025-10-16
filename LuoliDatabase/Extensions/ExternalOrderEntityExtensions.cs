@@ -1,4 +1,5 @@
-﻿using LuoliCommon.DTO.Agiso;
+﻿using Grpc.Core;
+using LuoliCommon.DTO.Agiso;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Enums;
 using LuoliDatabase.Entities;
@@ -34,7 +35,7 @@ namespace LuoliDatabase
 
             dto.FromPlatform = entity.from_platform;
             dto.Tid = entity.tid;
-            dto.Status = entity.status;
+            dto.Status = (EPlatformOrderStatus)Enum.Parse(typeof(EPlatformOrderStatus), entity.status );
 
             dto.SellerNick = entity.seller_nick;
             dto.SellerOpenUid = entity.seller_open_uid;
