@@ -79,7 +79,7 @@ namespace LuoliCommon.DTO.ExternalOrder
         /// <summary>
         /// 订单项列表
         /// </summary>
-        public Order Order { get; set; }
+        public List<Order> SubOrders { get; set; }
     }
 
     

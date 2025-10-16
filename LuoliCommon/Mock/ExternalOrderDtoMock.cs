@@ -69,7 +69,7 @@ namespace LuoliCommon.Mock
                     Type = _types[_random.Next(_types.Count)],
                     CreateTime = createTime,
                     UpdateTime = updateTime,
-                    Order = new DTO.Agiso.Order()
+                    SubOrders = new List<DTO.Agiso.Order>()
                 });
             }
 

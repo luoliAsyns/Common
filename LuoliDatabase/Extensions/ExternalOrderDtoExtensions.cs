@@ -20,7 +20,6 @@ namespace LuoliDatabase.Extensions
 
             if (dto is null)
                 return null;
-            // 映射属性（处理命名差异和类型转换）
 
             var entity = new ExternalOrderEntity();
 
@@ -30,7 +29,7 @@ namespace LuoliDatabase.Extensions
             entity.status = dto.Status;
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
-            entity.content = JsonSerializer.Serialize(dto.Order);
+            entity.content = JsonSerializer.Serialize(dto.SubOrders);
           
             entity.buyer_nick = dto.BuyerNick;
             entity.buyer_open_uid = dto.BuyerOpenUid;
@@ -44,14 +43,15 @@ namespace LuoliDatabase.Extensions
 
         }
 
-        public static CouponDTO ToCouponDTO(this ExternalOrderDTO dto)
+        public static CouponDTO ToCouponDTO(this ExternalOrderDTO dto, string appSecret)
         {
 
             if (dto is null)
                 return null;
-            // 映射属性（处理命名差异和类型转换）
 
             var couponDTO = new CouponDTO();
+
+            couponDTO.Coupon = LuoliUtils.Decoder.SHA256($"{dto.FromPlatform}-{dto.Tid}-{appSecret}");
 
             couponDTO.ExternalOrderTid = dto.Tid;
             couponDTO.ExternalOrderFromPlatform = dto.FromPlatform;
@@ -79,8 +79,11 @@ namespace LuoliDatabase.Extensions
             if (dto.PayAmount <= 0)
                 return (false, "PayAmount must be greater than 0");
 
-            if (dto.Order is null)
-                return (false, "ExternalOrderDTO.Order cannot be null");
+            if (dto.SubOrders is null)
+                return (false, "ExternalOrderDTO.SubOrders cannot be null");
+
+            if (dto.SubOrders.Count> 0)
+                return (false, "ExternalOrderDTO.SubOrders count need to be greater than 0");
 
             return (true, string.Empty);
 

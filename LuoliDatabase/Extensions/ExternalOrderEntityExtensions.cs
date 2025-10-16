@@ -29,7 +29,7 @@ namespace LuoliDatabase
             dto.TargetProxy = targetProxy;
             dto.CreateTime = entity.create_time;
             dto.UpdateTime = entity.update_time;
-            dto.Order = JsonSerializer.Deserialize<Order>(entity.content);
+            dto.SubOrders = JsonSerializer.Deserialize<List<Order>>(entity.content);
             dto.PayAmount = entity.payment;
 
             dto.FromPlatform = entity.from_platform;
