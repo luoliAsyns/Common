@@ -18,79 +18,47 @@ namespace LuoliDatabase.Extensions
     public static class TradeInfoDTOExtensions
     {
 
-        public static List<ExternalOrderDTO> ToExternalOrderDTO(this TradeInfoDTO tradeInfo)
+        public static ExternalOrderDTO ToExternalOrderDTO(this TradeInfoDTO tradeInfo, Func<Order, ETargetProxy> getProxy)
         {
-            List<ExternalOrderDTO> list = new(4);
             if (tradeInfo is null)
-                return list;
+                return null;
 
             //失败的response
-            if(!tradeInfo.IsSuccess)
-                return list;
-
-            if (tradeInfo.Data.Orders.Count == 1)
-            {
-                var dto = ToExternalOrderDTO(tradeInfo, tradeInfo.Data.Orders.First());
-                if (dto != null)  // 仅当dto不为null时才添加到列表
-                    list.Add(dto);
-                return list;
-            }
-
-            //一笔订单多个item
-            foreach(var order in tradeInfo.Data.Orders.OrderBy(o=>o.Oid))
-            {
-                var orderDTO =ToExternalOrderDTO(tradeInfo, tradeInfo.Data.Orders.First());
-
-                if (orderDTO == null)
-                    continue;
-
-                // 仅当dto不为null时才添加到列表
-                list.Add(orderDTO);
-
-                //直接以订单编号 Tid-1  Tid-2 来表示
-                orderDTO.Tid += "-" + list.Count;
-            }
-
-            return list;
-        }
-
-        private static ExternalOrderDTO? ToExternalOrderDTO(TradeInfoDTO tradeInfo, Order order)
-        {
-            try { 
-          
-                var dto = new ExternalOrderDTO();
-                string targetProxy = RedisHelper.HGet(RedisKeys.SkuId2Proxy, order.SkuId);
-
-                if (!EnumOperator.TryParseIgnoringCaseAndSpaces(targetProxy, out ETargetProxy eTargetProxy))
-                    return null;
-
-                dto.TargetProxy = eTargetProxy;
-
-                dto.CreateTime = DateTime.Parse(tradeInfo.Data.Created);
-                dto.UpdateTime = dto.CreateTime;
-                dto.PayAmount = decimal.Parse(order.DivideOrderFee);
-
-                dto.FromPlatform = tradeInfo.Data.Platform;
-                dto.Tid = tradeInfo.Data.Tid.ToString();
-                dto.Status = tradeInfo.Data.Status;
-
-                dto.SellerNick = tradeInfo.Data.SellerNick;
-                //tradeinfo里没有这个
-                //dto.SellerOpenUid = tradeInfo.Data.SellerOpenUid;
-                dto.BuyerNick = tradeInfo.Data.BuyerNick;
-                dto.BuyerOpenUid = tradeInfo.Data.BuyerOpenUid;
-
-                dto.Order = order;
-
-                return dto;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
+            if (!tradeInfo.IsSuccess)
                 return null;
-            }
-           
+
+            ExternalOrderDTO dto = new ExternalOrderDTO();
+
+
+            dto.SubOrders = tradeInfo.Data.Orders;
+
+
+            //string targetProxy = RedisHelper.HGet(RedisKeys.SkuId2Proxy, order.SkuId);
+
+            //if (!EnumOperator.TryParseIgnoringCaseAndSpaces(targetProxy, out ETargetProxy eTargetProxy))
+            //    return ETargetProxy.Default;
+          
+            dto.TargetProxy = getProxy(tradeInfo.Data.Orders.First());
+
+            dto.CreateTime = DateTime.Parse(tradeInfo.Data.Created);
+            dto.UpdateTime = dto.CreateTime;
+            dto.PayAmount = tradeInfo.Data.Orders.Sum(o=> decimal.Parse(o.DivideOrderFee));
+
+            dto.FromPlatform = tradeInfo.Data.Platform;
+            dto.Tid = tradeInfo.Data.Tid.ToString();
+            dto.Status = tradeInfo.Data.Status switch {
+                "WAIT_SELLER_SEND_GOODS" => EPlatformOrderStatus.Pulled,
+                "WAIT_BUYER_CONFIRM_GOODS" =>  EPlatformOrderStatus.Shipped,
+                _=> throw new Exception($"不支持的订单状态:{tradeInfo.Data.Status}")
+            };
+
+            dto.SellerNick = tradeInfo.Data.SellerNick;
+            //tradeinfo里没有这个
+            //dto.SellerOpenUid = tradeInfo.Data.SellerOpenUid;
+            dto.BuyerNick = tradeInfo.Data.BuyerNick;
+            dto.BuyerOpenUid = tradeInfo.Data.BuyerOpenUid;
+
+            return dto;
         }
 
         public static (bool,string) Validate(this CouponDTO dto)
