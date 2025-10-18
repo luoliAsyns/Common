@@ -261,6 +261,43 @@ public class AsynsApis
         }
     }
 
+    public async Task<ApiResponse<CouponDTO>> CouponQuery(string from_platform, string tid)
+    {
+        try
+        {
+            var url = $"{Url_Coupon_Query}?tid={tid}&from_platform={from_platform}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<CouponDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<CouponDTO>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<CouponDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
 
     public async Task<ApiResponse<List<CouponDTO>>> CouponValidate(string[] coupons, byte? status)
     {

@@ -10,7 +10,7 @@ namespace LuoliCommon.Enums
     public enum  EPlatformCode
     {
         [Description("淘宝")]
-        Taobao = 0,
+        Taobao = 1,
         [Description("闲鱼")]
         Xianyu,
         [Description("微信小程序")]

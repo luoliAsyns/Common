@@ -10,7 +10,7 @@ namespace LuoliCommon.Enums
     public enum ECouponStatus
     {
         [Description("已生成")]
-        Generated = 0,
+        Generated = 1,
         [Description("已开始处理，等待BOT消费")]
         Consuming,
         [Description("已被BOT消费")]

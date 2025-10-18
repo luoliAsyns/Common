@@ -94,9 +94,6 @@ namespace LuoliDatabase.Extensions
             if (dto.Status == EPlatformOrderStatus.Refunding)
                 return (false, "平台订单处于退款中");
 
-            if (dto.Status == EPlatformOrderStatus.Shipped)
-                return (false, "平台订单已下单，不应该再生成coupon");
-
             return (true, string.Empty);
 
         }

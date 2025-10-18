@@ -53,5 +53,40 @@ namespace LuoliUtils
             }
         }
 
+
+
+        private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private static readonly Random _random = new Random();
+
+        /// <summary>
+        /// 将输入字符串转换为 6 位短链编码
+        /// </summary>
+        /// <param name="input">完整url  例如 https://consume.huoshan.asynspetfood.top?coupon=12346578901234567890123456789012</param>
+        /// <returns>6 位短链编码</returns>
+        public static string GenerateShortCode(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                throw new ArgumentException("输入字符串不能为空", nameof(input));
+
+            // 1. 使用 SHA256 哈希计算（比 MD5 更安全，生成 256 位哈希值）
+            using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] hashBytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                // 2. 从哈希值中取前 4 个字节（32 位）作为种子，确保相同输入生成相同短链
+                uint seed = BitConverter.ToUInt32(hashBytes, 0);
+
+                // 3. 基于种子生成 6 位短链（保证相同输入输出一致，不同输入大概率不同）
+                var random = new Random((int)seed);
+                var shortCode = new char[6];
+                for (int i = 0; i < 6; i++)
+                {
+                    // 从字符集中随机选择（基于种子的伪随机，确保一致性）
+                    shortCode[i] = Chars[random.Next(Chars.Length)];
+                }
+
+                return new string(shortCode);
+            }
+        }
     }
 }

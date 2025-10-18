@@ -10,7 +10,7 @@ namespace LuoliCommon.Enums
     public enum EPayType
     {
         [Description("平台付款")]
-        Platform = 0,
+        Platform = 1,
         [Description("个人收款")]
         Personal,
     }

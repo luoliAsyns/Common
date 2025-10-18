@@ -22,9 +22,7 @@ namespace LuoliCommon.Mock
         private static readonly List<EPlatformOrderStatus> _statuses = new List<EPlatformOrderStatus>
     {
          EPlatformOrderStatus.Pulled,
-            EPlatformOrderStatus.Shipped,
              EPlatformOrderStatus.Refunding,
-              EPlatformOrderStatus.Placed
     };
 
         // 交易类型列表

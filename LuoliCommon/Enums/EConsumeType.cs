@@ -10,7 +10,7 @@ namespace LuoliCommon.Enums
     public enum EConsumeType
     {
         [Description("自提")]
-        Pickup = 0,
+        Pickup = 1,
         [Description("外卖")]
         Takeout
     }
