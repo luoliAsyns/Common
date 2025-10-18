@@ -26,6 +26,7 @@ namespace LuoliDatabase
             var dto = new ExternalOrderDTO();
             if (!EnumOperator.TryParseIgnoringCaseAndSpaces(entity.target_proxy, out ETargetProxy targetProxy))
                 return null;
+
                 
             dto.TargetProxy = targetProxy;
             dto.CreateTime = entity.create_time;
