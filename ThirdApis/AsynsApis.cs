@@ -228,7 +228,7 @@ public class AsynsApis
     {
         try
         {
-            var url = $"{Url_Coupon_Query}?coupon={coupon}";
+            var url = $"{Url_Coupon_Query}-coupon?coupon={coupon}";
             var response = await ApiCaller.GetAsync(url);
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -265,7 +265,7 @@ public class AsynsApis
     {
         try
         {
-            var url = $"{Url_Coupon_Query}?tid={tid}&from_platform={from_platform}";
+            var url = $"{Url_Coupon_Query}-tid?tid={tid}&from_platform={from_platform}";
             var response = await ApiCaller.GetAsync(url);
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
