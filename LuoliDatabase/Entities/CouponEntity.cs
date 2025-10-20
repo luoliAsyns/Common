@@ -72,12 +72,17 @@ namespace LuoliDatabase.Entities
            /// </summary>           
            public byte status {get;set;}
 
-           /// <summary>
-           /// Desc:更新时间
-           /// Default:CURRENT_TIMESTAMP
-           /// Nullable:False
-           /// </summary>           
-           public DateTime update_time {get;set;}
+
+        public string short_url { get; set; }
+
+        public string raw_url { get; set; }
+
+        /// <summary>
+        /// Desc:更新时间
+        /// Default:CURRENT_TIMESTAMP
+        /// Nullable:False
+        /// </summary>           
+        public DateTime update_time {get;set;}
 
            /// <summary>
            /// Desc:是否删除：0-未删除，1-已删除

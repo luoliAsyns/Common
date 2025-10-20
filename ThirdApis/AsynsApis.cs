@@ -199,11 +199,12 @@ public class AsynsApis
         }
     }
 
-    public async Task<ApiResponse<bool>> ExternalOrderUpdate(ExternalOrderDTO dto)
+    public async Task<ApiResponse<bool>> ExternalOrderUpdate(LuoliCommon.DTO.ExternalOrder.UpdateRequest ur)
     {
         try
         {
-            string bodyStr = JsonSerializer.Serialize(dto);
+
+            string bodyStr = JsonSerializer.Serialize(ur);
 
             var response = await ApiCaller.PostAsync(Url_ExternalOrder_Update, bodyStr);
 
@@ -571,13 +572,13 @@ public class AsynsApis
         }
     }
 
-    public async Task<ApiResponse<bool>> CouponUpdate(CouponDTO dto)
+    public async Task<ApiResponse<bool>> CouponUpdate(LuoliCommon.DTO.Coupon.UpdateRequest ur)
     {
         try
         {
             var url = Url_Coupon_Update;
 
-            var bodyStr = JsonSerializer.Serialize(dto);
+            var bodyStr = JsonSerializer.Serialize(ur);
 
             var response = await ApiCaller.PostAsync(url, bodyStr);
 

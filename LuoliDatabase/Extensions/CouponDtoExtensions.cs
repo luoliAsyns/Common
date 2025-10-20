@@ -49,7 +49,7 @@ namespace LuoliDatabase.Extensions
             if (string.IsNullOrEmpty(dto.ExternalOrderTid))
                 return (false, "ExternalOrderTid is required");
 
-            if (dto.AvailableBalance <= 0)
+            if (dto.AvailableBalance < 0)
                 return (false, "AvailableBalance  must be greater than 0");
 
             if (dto.Payment <= 0)

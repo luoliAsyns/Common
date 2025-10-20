@@ -24,8 +24,13 @@ namespace LuoliCommon.Enums
 
         [Description("发送卡密")]
         Coupon_Shipment=20,
-        [Description("消费卡密")]
-        Coupon_Consume,
+        [Description("发送卡密失败")]
+        Coupon_ShipFailed,
+
+        [Description("下单成功")]
+        Placed,
+        [Description("下单失败")]
+        PlaceFailed,
 
 
     }

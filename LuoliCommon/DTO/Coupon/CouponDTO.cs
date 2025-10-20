@@ -53,6 +53,10 @@ public class CouponDTO
     /// </summary>           
     public ECouponStatus Status {get;set;}
 
+    public string ShortUrl { get; set; }
+
+    public string RawUrl { get; set; }
+
     /// <summary>
     /// Desc:更新时间
     /// Default:CURRENT_TIMESTAMP
