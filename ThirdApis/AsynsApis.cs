@@ -708,7 +708,7 @@ public class AsynsApis
             var url = Url_ConsumeInfo_Query;
 
 
-            var response = await ApiCaller.GetAsync($"{url}?goodsType={goodsType}&id={id}");
+            var response = await ApiCaller.GetAsync($"{url}-id?goodsType={goodsType}&id={id}");
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -746,7 +746,7 @@ public class AsynsApis
             var url = Url_ConsumeInfo_Query;
 
 
-            var response = await ApiCaller.GetAsync($"{url}?goodsType={goodsType}&coupon={coupon}");
+            var response = await ApiCaller.GetAsync($"{url}-coupon?goodsType={goodsType}&coupon={coupon}");
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
