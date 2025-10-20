@@ -72,6 +72,7 @@ public class AsynsApis
         }
     }
     private string Url_ConsumeInfo_Delete { get { return Url_ConsumeInfo + "api/consume-info/delete"; } }
+    private string Url_ConsumeInfo_Update { get { return Url_ConsumeInfo + "api/consume-info/update"; } }
     private string Url_ConsumeInfo_Query { get { return Url_ConsumeInfo + "api/consume-info/query"; } }
     private string Url_ConsumeInfo_Insert { get { return Url_ConsumeInfo + "api/consume-info/insert"; } }
 
@@ -700,7 +701,6 @@ public class AsynsApis
             return resp;
         }
     }
-
     public async Task<ApiResponse<ConsumeInfoDTO>> ConsumeInfoQuery(string goodsType, long id)
     {
         try
@@ -739,8 +739,83 @@ public class AsynsApis
             return resp;
         }
     }
+    public async Task<ApiResponse<ConsumeInfoDTO>> ConsumeInfoQuery(string goodsType, string coupon)
+    {
+        try
+        {
+            var url = Url_ConsumeInfo_Query;
 
 
+            var response = await ApiCaller.GetAsync($"{url}?goodsType={goodsType}&coupon={coupon}");
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ConsumeInfoQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<ConsumeInfoDTO>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<ConsumeInfoDTO>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ConsumeInfoQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<ConsumeInfoDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+    public async Task<ApiResponse<bool>> ConsumeInfoUpdate(LuoliCommon.DTO.ConsumeInfo.UpdateRequest ur)
+    {
+        try
+        {
+            var url = Url_ConsumeInfo_Update;
+
+            var bodyStr = JsonSerializer.Serialize(ur);
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ConsumeInfoUpdate failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ConsumeInfoUpdate failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
 
     #endregion
 
