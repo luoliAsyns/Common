@@ -126,7 +126,7 @@ public class AsynsApis
         }
     }
 
-    public async Task<ApiResponse<bool>> ExternalOrderDelete(DeleteRequest dq)
+    public async Task<ApiResponse<bool>> ExternalOrderDelete(LuoliCommon.DTO.ConsumeInfo.DeleteRequest dq)
     {
         try
         {
