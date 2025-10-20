@@ -27,6 +27,8 @@
         public static string BranchId2City = "sexytea.branchid2city";
 
 
+        public static string SexyteaTokenAccount = "sexytea.token";
+
         public static string WWMsgTemplate = "msg.template";
 
         public static string Pub_RefreshShipStatus="refresh.ship.status";

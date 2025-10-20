@@ -47,9 +47,9 @@ namespace LuoliDatabase.Extensions
             dto.FromPlatform = tradeInfo.Data.Platform;
             dto.Tid = tradeInfo.Data.Tid.ToString();
             dto.Status = tradeInfo.Data.Status switch {
-                "WAIT_SELLER_SEND_GOODS" => EPlatformOrderStatus.Pulled,
+                "WAIT_SELLER_SEND_GOODS" => EExternalOrderStatus.Pulled,
                 //这里理论上只会收到付款和退款两种状态的订单
-                //"WAIT_BUYER_CONFIRM_GOODS" =>  EPlatformOrderStatus.Shipped,
+                //"WAIT_BUYER_CONFIRM_GOODS" =>  EExternalOrderStatus.Shipped,
                 _ => throw new Exception($"不支持的订单状态:{tradeInfo.Data.Status}")
             };
 

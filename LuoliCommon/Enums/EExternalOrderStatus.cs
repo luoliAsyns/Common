@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace LuoliCommon.Enums
 {
-    public enum EPlatformOrderStatus
+    public enum EExternalOrderStatus
     {
+        [Description("初始状态")]
+        Default = 0,
 
         [Description("已拉取")]
         Pulled =1,

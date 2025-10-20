@@ -82,7 +82,7 @@ namespace LuoliDatabase.Extensions
             if (dto.SubOrders is null)
                 return (false, "ExternalOrderDTO.SubOrders cannot be null");
 
-            if (dto.SubOrders.Count> 0)
+            if (dto.SubOrders.Count== 0)
                 return (false, "ExternalOrderDTO.SubOrders count need to be greater than 0");
 
             return (true, string.Empty);
@@ -91,7 +91,7 @@ namespace LuoliDatabase.Extensions
         public static (bool, string) ValidateBeforeGenCoupon(this ExternalOrderDTO dto)
         {
 
-            if (dto.Status == EPlatformOrderStatus.Refunding)
+            if (dto.Status == EExternalOrderStatus.Refunding)
                 return (false, "平台订单处于退款中");
 
             return (true, string.Empty);

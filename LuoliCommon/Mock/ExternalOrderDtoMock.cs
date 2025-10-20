@@ -19,10 +19,10 @@ namespace LuoliCommon.Mock
     };
 
         // 订单状态列表
-        private static readonly List<EPlatformOrderStatus> _statuses = new List<EPlatformOrderStatus>
+        private static readonly List<EExternalOrderStatus> _statuses = new List<EExternalOrderStatus>
     {
-         EPlatformOrderStatus.Pulled,
-             EPlatformOrderStatus.Refunding,
+         EExternalOrderStatus.Pulled,
+             EExternalOrderStatus.Refunding,
     };
 
         // 交易类型列表

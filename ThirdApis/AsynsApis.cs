@@ -1,3 +1,4 @@
+using LuoliCommon.DTO.ConsumeInfo;
 using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Entities;
@@ -16,9 +17,9 @@ public class AsynsApis
         PropertyNameCaseInsensitive = true, // 关键配置：忽略大小写
     };
 
-    # region  external-order
+    # region  external-order url
 
-    private string Url_ExternalOrder
+    private string Url_ExternalOrder 
     {
         get
         {
@@ -36,8 +37,7 @@ public class AsynsApis
 
     #endregion
 
-    #region coupon
-
+    #region coupon url
 
     private string Url_Coupon
     {
@@ -50,13 +50,30 @@ public class AsynsApis
         }
     }
     private string Url_Coupon_Generate { get { return Url_Coupon + "api/coupon/generate"; } }
-    private string Url_Coupon_GenerateManual { get { return Url_Coupon + "api/coupon/generate-manual"; } } 
-    private string Url_Coupon_Delete { get { return Url_Coupon + "api/coupon/delete"; } } 
-    private string Url_Coupon_Query { get { return Url_Coupon + "api/coupon/query"; } }  
-    private string Url_Coupon_PageQuery { get { return Url_Coupon + "api/coupon/page-query"; } }  
-    private string Url_Coupon_Update { get { return Url_Coupon + "api/coupon/update"; } } 
-    private string Url_Coupon_Validate { get { return Url_Coupon + "api/coupon/validate"; } }  
-    private string Url_Coupon_Invalidate { get { return Url_Coupon + "api/coupon/invalidate"; } }  
+    private string Url_Coupon_GenerateManual { get { return Url_Coupon + "api/coupon/generate-manual"; } }
+    private string Url_Coupon_Delete { get { return Url_Coupon + "api/coupon/delete"; } }
+    private string Url_Coupon_Query { get { return Url_Coupon + "api/coupon/query"; } }
+    private string Url_Coupon_PageQuery { get { return Url_Coupon + "api/coupon/page-query"; } }
+    private string Url_Coupon_Update { get { return Url_Coupon + "api/coupon/update"; } }
+    private string Url_Coupon_Validate { get { return Url_Coupon + "api/coupon/validate"; } }
+    private string Url_Coupon_Invalidate { get { return Url_Coupon + "api/coupon/invalidate"; } }
+
+    #endregion
+
+    #region consume-info url
+    private string Url_ConsumeInfo
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_targetIp))
+                return "http://consume-info-service:8080/";
+            else
+                return _targetIp;
+        }
+    }
+    private string Url_ConsumeInfo_Delete { get { return Url_ConsumeInfo + "api/consume-info/delete"; } }
+    private string Url_ConsumeInfo_Query { get { return Url_ConsumeInfo + "api/consume-info/query"; } }
+    private string Url_ConsumeInfo_Insert { get { return Url_ConsumeInfo + "api/consume-info/insert"; } }
 
     #endregion
 
@@ -70,7 +87,7 @@ public class AsynsApis
         _targetIp = ip;
     }
 
-    #region ExternalOrderService
+    #region ExternalOrderService apis
     public async Task<ApiResponse<bool>> ExternalOrderInsert(ExternalOrderDTO dto)
     {
         try
@@ -221,8 +238,7 @@ public class AsynsApis
 
     #endregion
 
-
-    #region CouponService
+    #region CouponService apis
 
     public async Task<ApiResponse<CouponDTO>> CouponQuery(string coupon)
     {
@@ -599,7 +615,132 @@ public class AsynsApis
 
     #endregion
 
-    #region 1
+    #region ConsumeInfo apis
+
+    public async Task<ApiResponse<bool>> ConsumeInfoDelete(string goodsType, long id)
+    {
+        try
+        {
+            var url = Url_ConsumeInfo_Delete;
+
+            var bodyStr = JsonSerializer.Serialize(new
+            {
+                goodsType = goodsType,
+                id= id
+            });
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ConsumeInfoDelete failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ConsumeInfoDelete failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+    public async Task<ApiResponse<bool>> ConsumeInfoInsert(ConsumeInfoDTO dto)
+    {
+        try
+        {
+            var url = Url_ConsumeInfo_Insert;
+
+            var bodyStr = JsonSerializer.Serialize(dto);
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ConsumeInfoInsert failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ConsumeInfoInsert failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<ConsumeInfoDTO>> ConsumeInfoQuery(string goodsType, long id)
+    {
+        try
+        {
+            var url = Url_ConsumeInfo_Query;
+
+
+            var response = await ApiCaller.GetAsync($"{url}?goodsType={goodsType}&id={id}");
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ConsumeInfoQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<ConsumeInfoDTO>();
+                resp.data = null ;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<ConsumeInfoDTO>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ConsumeInfoQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<ConsumeInfoDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+
+
     #endregion
 
     #region 2

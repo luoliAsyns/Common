@@ -9,14 +9,27 @@ namespace LuoliCommon.Enums
 {
     public enum ECouponStatus
     {
+        [Description("初始状态")]
+        Default = 0,
+
         [Description("已生成")]
-        Generated = 1,
-        [Description("已开始处理，等待BOT消费")]
-        Consuming,
-        [Description("已被BOT消费")]
-        Consumed,
-        [Description("已回收")]
-        Recycled,
-        
+        Generated,
+
+        [Description("已推送")]
+        Shipped=10,
+        [Description("推送失败")]
+        ShipFailed,
+
+
+        [Description("已消费")]
+        Consumed=20,
+        [Description("消费失败")]
+        ConsumeFailed,
+
+        [Description("已作废")]
+        Recycled=30,
+        [Description("作废失败")]
+        RecycleFailed,
+
     }
 }

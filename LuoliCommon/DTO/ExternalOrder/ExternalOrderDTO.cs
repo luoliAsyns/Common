@@ -25,7 +25,7 @@ namespace LuoliCommon.DTO.ExternalOrder
         /// <summary>
         /// 订单状态
         /// </summary>
-        public EPlatformOrderStatus Status { get; set; }
+        public EExternalOrderStatus Status { get; set; }
 
         /// <summary>
         /// 卖家昵称

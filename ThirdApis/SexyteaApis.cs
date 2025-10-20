@@ -160,8 +160,8 @@ namespace ThirdApis
                     return (false, msg, -1);
                 }
 
-                decimal finalAmount = responseObj.RootElement.GetProperty("finalAmount").GetDecimal();
-                string orderNo = responseObj.RootElement.GetProperty("orderNo").GetString();
+                decimal finalAmount = responseObj.RootElement.GetProperty("data").GetProperty("finalAmount").GetDecimal();
+                string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
                 if ((finalAmount - consumeAmount) <0.02m)
                     return (true, orderNo, finalAmount);
@@ -243,9 +243,10 @@ namespace ThirdApis
             {
 
                 Dictionary<string, dynamic> header = new(4);
-                header.Add("token", account.Token);
                 header.Add("orderNo", consumeOrderNo);
                 header.Add("orderType", "1"); //固定值1
+                header.Add("token", account.Token);
+
 
 
                 var response = await ApiCaller.GetAsync(R7_Url_OrderPayCal, header);

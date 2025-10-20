@@ -16,6 +16,10 @@ namespace LuoliCommon.DTO.ConsumeInfo
         public object Goods { get; set; }
         public string GoodsType { get; set; }
 
+        public string Remark { get; set; }
+        public string LastName { get; set; }
+
+
     }
 
 

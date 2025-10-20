@@ -94,7 +94,7 @@ namespace LuoliDatabase.Entities
            public decimal payment {get;set;}
 
            /// <summary>
-           /// Desc: EPlatformOrderStatus 订单状态
+           /// Desc: EExternalOrderStatus 订单状态
            /// Default:
            /// Nullable:False
            /// </summary>           
