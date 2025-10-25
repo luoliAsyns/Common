@@ -60,6 +60,38 @@ namespace LuoliCommon.Enums
             // 如果没有找到Description，返回枚举值的字符串表示
             return enumValue.ToString();
         }
+  
+        
+        public static bool TryParseIgnoringCaseAndSpaces<T>(string str, out T enumValue) where T : struct, Enum
+        {
+            enumValue = default;
+
+            // 空字符串直接返回失败
+            if (string.IsNullOrWhiteSpace(str))
+                return false;
+
+            // 移除所有空格并转换为大写（统一比对标准）
+            string processedStr = str.Replace(" ", "").ToUpperInvariant();
+
+            // 获取枚举所有命名值
+            var enumValues = Enum.GetValues<T>();
+
+            // 遍历枚举值查找匹配项
+            foreach (var value in enumValues)
+            {
+                // 枚举名称处理（移除空格+大写）
+                string enumName = Enum.GetName(value)?.Replace(" ", "").ToUpperInvariant();
+
+                if (enumName == processedStr)
+                {
+                    enumValue = value;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
   
 }

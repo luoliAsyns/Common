@@ -1,10 +1,6 @@
-﻿using LuoliCommon.DTO.Agiso;
-using LuoliCommon.DTO.Coupon;
+﻿using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Enums;
-using LuoliDatabase.Entities;
-using LuoliHelper.StaticClasses;
-using LuoliUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using static Grpc.Core.Metadata;
 
-namespace LuoliDatabase.Extensions
+namespace LuoliCommon.DTO.Agiso
 {
     public static class TradeInfoDTOExtensions
     {

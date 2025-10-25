@@ -126,7 +126,7 @@ namespace ThirdApis
 
         //获取订单详情
 
-        public async Task<(bool, JsonDocument)> TradeInfo(string accessToken, string appSecret, string tid)
+        public async Task<(bool, TradeInfoDTO)> TradeInfo(string accessToken, string appSecret, string tid)
         {
             Dictionary<string, dynamic> header = new();
 
@@ -145,6 +145,7 @@ namespace ThirdApis
 
             bool success = false;
             JsonDocument responseObj= null;
+            TradeInfoDTO tradeInfoDTO = null;
 
             Func<Task> getTradeInfo =async () =>
             {
@@ -162,12 +163,15 @@ namespace ThirdApis
                 if (!success)
                     _logger.Error($"AgisoApis.TradeInfo failed, tid:[{tid}], Error_Msg:[{responseObj.RootElement.GetProperty("Error_Msg").GetString()}]");
                 else
-                    File.WriteAllText("tradeinfo", respStr);
+                {
+                    tradeInfoDTO = System.Text.Json.JsonSerializer.Deserialize<TradeInfoDTO>(respStr);
+                    File.WriteAllText("tradeinfo" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"), respStr);
+                }
             };
 
             await ActionsOperator.ReTryAction(getTradeInfo);
 
-            return (success, responseObj);
+            return (success, tradeInfoDTO);
         }
 
 
