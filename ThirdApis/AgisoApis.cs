@@ -230,7 +230,71 @@ namespace ThirdApis
             return (true, "", orderCreateDto);
         }
 
+        public async Task<(bool, string, OrderRefundRequest)> ValidateOrderRefundAsync(HttpRequest request, string rawJson)
+        {
+            // 提取并验证Timestamp
+            if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
+                !long.TryParse(timestampValue, out long timestamp))
+                return (false, "no Timestamp", null);
+
+            // 提取并验证Aopic
+            if (!request.Query.TryGetValue("Aopic", out var aopicValue) ||
+                !long.TryParse(aopicValue, out long aopic))
+                return (false, "no Aopic", null);
+
+
+            // 提取并验证Sign
+            if (!request.Query.TryGetValue("Sign", out var signValue) ||
+                string.IsNullOrWhiteSpace(signValue))
+                return (false, "no Sign", null);
+
+
+            // 提取并验证FromPlatform
+            if (!request.Query.TryGetValue("FromPlatform", out var fromPlatformValue) ||
+                string.IsNullOrWhiteSpace(fromPlatformValue))
+                return (false, "no FromPlatform", null);
+
+
+
+
+
+            // 4. 反序列化为OrderRefundRequest对象
+            OrderRefundRequest orderRefundDto;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    FloatParseHandling = FloatParseHandling.Decimal,
+                    Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
+                };
+
+                orderRefundDto = JsonConvert.DeserializeObject<OrderRefundRequest>(rawJson, settings);
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                return (false, $"body format not correct: {ex.Message}", null);
+            }
+
+            orderRefundDto.Sign = signValue;
+            orderRefundDto.Timestamp = timestamp;
+            orderRefundDto.Aopic = aopic;
+            orderRefundDto.FromPlatform = fromPlatformValue;
+
+
+            return (true, "", orderRefundDto);
+        }
+
         public bool ValidateSign(OrderCreateRequest dto, string rawJson, string appSecret)
+        {
+            var dictParams = new Dictionary<string, string>();
+            dictParams.Add("timestamp", dto.Timestamp.ToString());
+            dictParams.Add("json", rawJson);
+            //参考签名算法
+            var checkSign = Sign(dictParams, appSecret);
+            return string.Equals(checkSign, dto.Sign);
+        }
+
+        public bool ValidateSign(OrderRefundRequest dto, string rawJson, string appSecret)
         {
             var dictParams = new Dictionary<string, string>();
             dictParams.Add("timestamp", dto.Timestamp.ToString());

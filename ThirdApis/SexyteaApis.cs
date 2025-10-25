@@ -1,12 +1,13 @@
-﻿using System;
+﻿using LuoliCommon.DTO.ConsumeInfo.Sexytea;
+using LuoliCommon.Logger;
+using LuoliUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using LuoliUtils;
-using LuoliCommon.Logger;
-using LuoliCommon.DTO.ConsumeInfo.Sexytea;
 
 namespace ThirdApis
 {
@@ -33,9 +34,11 @@ namespace ThirdApis
         //因为有积点，这个可以算订单我需要付多少钱
         private  string R7_Url_OrderPayCal = "https://miniapp.sexytea2013.com/api/common/pay/queryMixPayPrepareInfo";
 
+        private string R8_Url_OrderDetail = "https://miniapp.sexytea2013.com/api/v5/order/detail";
 
 
-        private  string W1_Url_Regions = "https://miniapp.sexytea2013.com/api/v2/branch/regions";
+
+        private string W1_Url_Regions = "https://miniapp.sexytea2013.com/api/v2/branch/regions";
         private  string W2_Url_BranchIdsInRegion = "https://miniapp.sexytea2013.com/api/map/branch/queryALL";
 
         private readonly ILogger _logger;
@@ -88,7 +91,7 @@ namespace ThirdApis
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCal failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, OrderCal failed, StatusCode:[{response.StatusCode}]");
                     return (false, -1, "网络波动 OrderCal失败了");
                 }
 
@@ -99,7 +102,7 @@ namespace ThirdApis
                 if (code != 200)
                 {
                     string msg = responseObj.RootElement.GetProperty("msg").GetString();
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCal failed, responseObj.code:[{code}], msg:[{msg}]");
+                    _logger.Error($"SexyteaApis, OrderCal failed, responseObj.code:[{code}], msg:[{msg}]");
                     return (false, -1, msg);
                 }
 
@@ -107,13 +110,12 @@ namespace ThirdApis
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCal failed");
+                _logger.Error($"SexyteaApis, OrderCal failed");
                 _logger.Error(ex.Message);
                 return (false, -1, "未知异常，可以重试一下");
             }
 
         }
-
 
         public  async Task<(bool, string, decimal)> OrderCreate(Account account, int branchId, List<OrderItem> orderItems, string lastName, string comments, decimal consumeAmount, bool needToPack = false)
         {
@@ -145,7 +147,7 @@ namespace ThirdApis
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCreate failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, OrderCreate failed, StatusCode:[{response.StatusCode}]");
                     return (false, null, -1);
                 }
 
@@ -156,7 +158,7 @@ namespace ThirdApis
                
                 if (code != 200)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCreate failed, responseObj.code:[{code}], msg:[{msg}]");
+                    _logger.Error($"SexyteaApis, OrderCreate failed, responseObj.code:[{code}], msg:[{msg}]");
                     return (false, msg, -1);
                 }
 
@@ -166,18 +168,16 @@ namespace ThirdApis
                 if ((finalAmount - consumeAmount) <0.02m)
                     return (true, orderNo, finalAmount);
 
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
+                _logger.Error($"SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
                 return (false, "unknown exception", -1);
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderCreate failed");
+                _logger.Error($"SexyteaApis, OrderCreate failed");
                 _logger.Error(ex.Message);
                 return (false, ex.Message, -1);
             }
         }
-
-
 
         public  async Task<bool> OrderPay(Account account, string orderNo, decimal payAmount)
         {
@@ -204,7 +204,7 @@ namespace ThirdApis
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPay failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, OrderPay failed, StatusCode:[{response.StatusCode}]");
                     return false;
                 }
 
@@ -215,24 +215,23 @@ namespace ThirdApis
 
                 if (code != 200)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPay failed, responseObj.code:[{code}], msg:[{msg}]");
+                    _logger.Error($"SexyteaApis, OrderPay failed, responseObj.code:[{code}], msg:[{msg}]");
                     return false;
                 }
                 bool ok = responseObj.RootElement.GetProperty("ok").GetBoolean();
                 if (ok)
                     return true;
 
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
+                _logger.Error($"SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
                 return false;
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
+                _logger.Error($"SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
                 _logger.Error(ex.Message);
                 return false;
             }
         }
-
 
         public  async Task<(bool, decimal, string)> OrderPayCal(Account account, string consumeOrderNo)
         {
@@ -242,19 +241,21 @@ namespace ThirdApis
             try
             {
 
-                Dictionary<string, dynamic> header = new(4);
-                header.Add("orderNo", consumeOrderNo);
-                header.Add("orderType", "1"); //固定值1
-                header.Add("token", account.Token);
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append(R7_Url_OrderPayCal);
+                sb.Append($"?orderNo={consumeOrderNo}");
+                sb.Append($"&orderType=1");
+                sb.Append($"&token={account.Token}");
 
 
 
-                var response = await ApiCaller.GetAsync(R7_Url_OrderPayCal, header);
+                var response = await ApiCaller.GetAsync(sb.ToString());
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     msg = $"HttpStatusCode: {response.StatusCode }";
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPayCal failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, OrderPayCal failed, StatusCode:[{response.StatusCode}]");
                     return (result, need2Pay, msg);
                 }
 
@@ -265,7 +266,7 @@ namespace ThirdApis
 
                 if (code != 200)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPayCal failed, responseObj.code:[{code}], msg:[{msg}]");
+                    _logger.Error($"SexyteaApis, OrderPayCal failed, responseObj.code:[{code}], msg:[{msg}]");
                     return (result, need2Pay, msg);
                 }
                 bool ok = responseObj.RootElement.GetProperty("ok").GetBoolean();
@@ -276,19 +277,16 @@ namespace ThirdApis
                     return (result, need2Pay, msg);
                 }
 
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPayCal failed, consume_order_no:{consumeOrderNo}");
+                _logger.Error($"SexyteaApis, OrderPayCal failed, consume_order_no:{consumeOrderNo}");
                 return (result, need2Pay,"unknown exception");
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, OrderPayCal failed, consume_order_no:{consumeOrderNo}");
+                _logger.Error($"SexyteaApis, OrderPayCal failed, consume_order_no:{consumeOrderNo}");
                 _logger.Error(ex.Message);
                 return (result, need2Pay , ex.Message);
             }
         }
-
-
-
 
         public  async Task<List<string>> GetRegions()
         {
@@ -301,7 +299,7 @@ namespace ThirdApis
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetRegions failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, GetRegions failed, StatusCode:[{response.StatusCode}]");
                     return cities;
                 }
 
@@ -334,12 +332,12 @@ namespace ThirdApis
                     return cities;
                 }
 
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetRegions failed");
+                _logger.Error($"SexyteaApis, GetRegions failed");
                 return cities;
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetRegions failed");
+                _logger.Error($"SexyteaApis, GetRegions failed");
                 _logger.Error(ex.Message);
                 return cities;
             }
@@ -352,17 +350,6 @@ namespace ThirdApis
             try
             {
                 Dictionary<string, dynamic> body = new();
-                //body.Add("city", region);
-                //body.Add("county", "");
-                //body.Add("lat", "10.0");
-                //body.Add("lng", "120.0");
-                //body.Add("name", "");
-                //body.Add("platform", "");
-                //body.Add("province", "");
-                //body.Add("type", "");
-                //body.Add("pageNum", "1");
-                //body.Add("pageSize", "10");
-                //body.Add("brandId", "100"); //意思是茶颜悦色
 
                 body.Add("city", region);
                 body.Add("county", "");
@@ -380,7 +367,7 @@ namespace ThirdApis
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetBranchIdsInRegion failed, StatusCode:[{response.StatusCode}]");
+                    _logger.Error($"SexyteaApis, GetBranchIdsInRegion failed, StatusCode:[{response.StatusCode}]");
                     return branchIds;
                 }
 
@@ -409,16 +396,33 @@ namespace ThirdApis
                     return branchIds;
                 }
 
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetBranchIdsInRegion failed");
+                _logger.Error($"SexyteaApis, GetBranchIdsInRegion failed");
                 return branchIds;
             }
             catch (Exception ex)
             {
-                _logger.Error($"PlaceOrderBOT.Sexytea.SexyteaApis, GetBranchIdsInRegion failed");
+                _logger.Error($"SexyteaApis, GetBranchIdsInRegion failed");
                 _logger.Error(ex.Message);
                 return branchIds;
             }
         }
 
+        public async Task<dynamic> GetOrderInfo(Account account, string orderNo)
+        {
+
+            Dictionary<string, dynamic> header = new(4);
+            header.Add("token", account.Token);
+
+
+            var response = await ApiCaller.GetAsync(R8_Url_OrderDetail + "/" + orderNo, headers: header);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _logger.Error($"SexyteaApis, GetOrderInfo failed, StatusCode:[{response.StatusCode}]");
+                return null;
+            }
+            var result = JsonSerializer.Deserialize<dynamic>(await response.Content.ReadAsStringAsync());
+            return result;
+        }
     }
 }
