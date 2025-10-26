@@ -2,6 +2,7 @@ using LuoliCommon.DTO.ConsumeInfo;
 using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Entities;
+using LuoliCommon.Enums;
 using LuoliCommon.Logger;
 using LuoliUtils;
 using MethodTimer;
@@ -317,20 +318,21 @@ public class AsynsApis
     }
 
 
-    public async Task<ApiResponse<List<CouponDTO>>> CouponValidate(string[] coupons, byte? status)
+    public async Task<ApiResponse<List<CouponDTO>>> CouponValidate(string[] coupons, ECouponStatus status)
     {
+        var resp = new ApiResponse<List<CouponDTO>>();
+        resp.data = null;
+        resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+
         try
         {
-            if(coupons.Length==0)
+            if (coupons.Length==0)
             {
-                var resp = new ApiResponse<List<CouponDTO>>();
-                resp.data = null;
-                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
                 resp.msg = "your input coupons length is 0";
                 return resp;
             }
 
-            var url = $"{Url_Coupon_Validate}?status={status}&{string.Join("&",coupons.Select(cp=>"coupons="+cp))}";
+            var url = $"{Url_Coupon_Validate}?status={(int)status}&{string.Join("&",coupons.Select(cp=>"coupons="+cp))}";
             var response = await ApiCaller.GetAsync(url);
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -338,9 +340,6 @@ public class AsynsApis
                 var errorMessage = await response.Content.ReadAsStringAsync();
 
                 _logger.Error($"AsynsApis.CouponValidate failed, StatusCode:[{response.StatusCode}]");
-                var resp = new ApiResponse<List<CouponDTO>>();
-                resp.data = null;
-                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
                 resp.msg = errorMessage;
                 return resp;
             }
@@ -354,11 +353,7 @@ public class AsynsApis
             _logger.Error($"AsynsApis.CouponValidate failed");
             _logger.Error(ex.Message);
 
-            var resp = new ApiResponse<List<CouponDTO>>();
-            resp.data = null;
-            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
             resp.msg = "未知异常";
-
             return resp;
         }
     }
