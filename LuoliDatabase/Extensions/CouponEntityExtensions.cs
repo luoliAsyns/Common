@@ -25,6 +25,8 @@ namespace LuoliDatabase
             dto.Payment = entity.payment;
             dto.AvailableBalance = entity.available_balance;
 
+            dto.ShortUrl = entity.short_url;
+            dto.RawUrl = entity.raw_url;
             dto.Status = (ECouponStatus)entity.status ;
             dto.Coupon = entity.coupon;
             dto.ExternalOrderFromPlatform = entity.external_order_from_platform;

@@ -28,12 +28,6 @@ namespace LuoliCommon.DTO.Agiso
 
             dto.SubOrders = tradeInfo.Data.Orders;
 
-
-            //string targetProxy = RedisHelper.HGet(RedisKeys.SkuId2Proxy, order.SkuId);
-
-            //if (!EnumOperator.TryParseIgnoringCaseAndSpaces(targetProxy, out ETargetProxy eTargetProxy))
-            //    return ETargetProxy.Default;
-          
             dto.TargetProxy = getProxy(tradeInfo.Data.Orders.First());
 
             dto.CreateTime = DateTime.Parse(tradeInfo.Data.Created);
@@ -42,12 +36,15 @@ namespace LuoliCommon.DTO.Agiso
 
             dto.FromPlatform = tradeInfo.Data.Platform;
             dto.Tid = tradeInfo.Data.Tid.ToString();
-            dto.Status = tradeInfo.Data.Status switch {
+            dto.Status = tradeInfo.Data.Status switch
+            {
                 "WAIT_SELLER_SEND_GOODS" => EExternalOrderStatus.Pulled,
+                "TRADE_CLOSED" => EExternalOrderStatus.Refunding,
                 //这里理论上只会收到付款和退款两种状态的订单
                 //"WAIT_BUYER_CONFIRM_GOODS" =>  EExternalOrderStatus.Shipped,
                 _ => throw new Exception($"不支持的订单状态:{tradeInfo.Data.Status}")
             };
+
 
             dto.SellerNick = tradeInfo.Data.SellerNick;
             //tradeinfo里没有这个

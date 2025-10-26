@@ -27,7 +27,9 @@ namespace LuoliDatabase.Extensions
             entity.status = (byte)dto.Status;
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
-            
+            entity.short_url = dto.ShortUrl;
+            entity.raw_url = dto.RawUrl;
+
             entity.available_balance = dto.AvailableBalance;
             entity.external_order_from_platform = dto.ExternalOrderFromPlatform;
             entity.external_order_tid = dto.ExternalOrderTid;

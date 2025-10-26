@@ -51,7 +51,7 @@ namespace LuoliDatabase.Extensions
 
             var couponDTO = new CouponDTO();
 
-            couponDTO.Coupon = LuoliUtils.Decoder.SHA256($"{dto.FromPlatform}-{dto.Tid}-{appSecret}");
+            couponDTO.Coupon = LuoliUtils.Decoder.SHA256($"{dto.FromPlatform}-{dto.Tid}-{appSecret}").Substring(0,32);
 
             couponDTO.ExternalOrderTid = dto.Tid;
             couponDTO.ExternalOrderFromPlatform = dto.FromPlatform;
