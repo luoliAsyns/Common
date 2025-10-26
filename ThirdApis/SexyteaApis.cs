@@ -165,7 +165,7 @@ namespace ThirdApis
                 decimal finalAmount = responseObj.RootElement.GetProperty("data").GetProperty("finalAmount").GetDecimal();
                 string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
-                if ((finalAmount - consumeAmount) <0.02m)
+                if (Math.Abs(finalAmount - consumeAmount) <0.02m)
                     return (true, orderNo, finalAmount);
 
                 _logger.Error($"SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
@@ -200,7 +200,7 @@ namespace ThirdApis
 
                 //R6_Url_OrderPay
                 //先写空，防止真的付款了；
-                var response = await ApiCaller.PostAsync("", bodyStr, header);
+                var response = await ApiCaller.PostAsync(R6_Url_OrderPay, bodyStr, header);
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
