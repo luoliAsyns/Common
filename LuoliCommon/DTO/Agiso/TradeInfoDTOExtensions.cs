@@ -39,6 +39,8 @@ namespace LuoliCommon.DTO.Agiso
             dto.Status = tradeInfo.Data.Status switch
             {
                 "WAIT_SELLER_SEND_GOODS" => EExternalOrderStatus.Pulled,
+                //"WAIT_BUYER_PAY" => EExternalOrderStatus.Pulled,
+
                 "TRADE_CLOSED" => EExternalOrderStatus.Refunding,
                 //这里理论上只会收到付款和退款两种状态的订单
                 //"WAIT_BUYER_CONFIRM_GOODS" =>  EExternalOrderStatus.Shipped,
