@@ -301,7 +301,7 @@ namespace ThirdApis
             dictParams.Add("json", rawJson);
             //参考签名算法
             var checkSign = Sign(dictParams, appSecret);
-            return string.Equals(checkSign, dto.Sign);
+            return string.Equals(checkSign, dto.Sign, StringComparison.OrdinalIgnoreCase);
         }
 
         private string ConvertBody2String(Dictionary<string, string> body)
