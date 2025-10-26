@@ -163,10 +163,12 @@ namespace ThirdApis
                 }
 
                 decimal finalAmount = responseObj.RootElement.GetProperty("data").GetProperty("finalAmount").GetDecimal();
+                //积点抵扣的钱
+                decimal discountAmount = responseObj.RootElement.GetProperty("data").GetProperty("discountAmount").GetDecimal();
                 string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
-                if (Math.Abs(finalAmount - consumeAmount) <0.02m)
-                    return (true, orderNo, finalAmount);
+                if (Math.Abs(finalAmount + discountAmount - consumeAmount) <0.02m)
+                    return (true, orderNo, (finalAmount + discountAmount) *0.8m);
 
                 _logger.Error($"SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
                 return (false, "unknown exception", -1);
