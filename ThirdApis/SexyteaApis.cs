@@ -1,4 +1,5 @@
-﻿using LuoliCommon.DTO.ConsumeInfo.Sexytea;
+﻿using LuoliCommon.DTO.Agiso;
+using LuoliCommon.DTO.ConsumeInfo.Sexytea;
 using LuoliCommon.Logger;
 using LuoliUtils;
 using System;
@@ -168,7 +169,10 @@ namespace ThirdApis
                 string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
                 if (Math.Abs(finalAmount + discountAmount - consumeAmount) <0.02m)
-                    return (true, orderNo, (finalAmount + discountAmount) *0.8m);
+                {
+                    _logger.Info($"订单创建成功, orderNo:[{orderNo}], 订单金额:[{finalAmount + discountAmount}]");
+                    return (true, orderNo, (finalAmount + discountAmount) * 0.8m);
+                }
 
                 _logger.Error($"SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
                 return (false, "unknown exception", -1);
@@ -200,8 +204,6 @@ namespace ThirdApis
                 string bodyStr = JsonSerializer.Serialize(body);
 
 
-                //R6_Url_OrderPay
-                //先写空，防止真的付款了；
                 var response = await ApiCaller.PostAsync(R6_Url_OrderPay, bodyStr, header);
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -222,7 +224,10 @@ namespace ThirdApis
                 }
                 bool ok = responseObj.RootElement.GetProperty("ok").GetBoolean();
                 if (ok)
+                {
+                    _logger.Info($"订单付款成功, orderNo:[{orderNo}], 支付的会员余额:[{payAmount}]");
                     return true;
+                }
 
                 _logger.Error($"SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
                 return false;
@@ -251,7 +256,6 @@ namespace ThirdApis
                 sb.Append($"&token={account.Token}");
 
 
-
                 var response = await ApiCaller.GetAsync(sb.ToString());
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -276,6 +280,7 @@ namespace ThirdApis
                 if (ok)
                 {
                     result = true;
+                    _logger.Info($"订单计算成功, orderNo:[{consumeOrderNo}], 计算需要支付会员余额:[{need2Pay}]");
                     return (result, need2Pay, msg);
                 }
 
