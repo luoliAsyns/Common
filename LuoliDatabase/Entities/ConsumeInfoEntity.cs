@@ -66,15 +66,15 @@ namespace LuoliDatabase.Entities
            public string source {get;set;}
 
             public string last_name { get; set; }
+        public string remark { get; set; }
+        public int status { get; set; }
 
-            public string remark { get; set; }
-
-            /// <summary>
-            /// Desc:更新时间
-            /// Default:CURRENT_TIMESTAMP
-            /// Nullable:False
-            /// </summary>           
-            public DateTime update_time {get;set;}
+        /// <summary>
+        /// Desc:更新时间
+        /// Default:CURRENT_TIMESTAMP
+        /// Nullable:False
+        /// </summary>           
+        public DateTime update_time {get;set;}
 
            /// <summary>
            /// Desc:是否删除：0-未删除，1-已删除

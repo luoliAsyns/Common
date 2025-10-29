@@ -29,6 +29,7 @@ namespace LuoliDatabase.Extensions
             entity.coupon = dto.Coupon;
             entity.last_name = dto.LastName;
             entity.remark = dto.Remark;
+            entity.status = (int)dto.Status;
             return entity;
 
         }
