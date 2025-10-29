@@ -40,6 +40,8 @@ namespace LuoliDatabase.Extensions
                 _ => throw new Exception($"unknown goodsType {dto.GoodsType}"),
             };
 
+            dto.LastName = entity.last_name;
+            dto.Remark = entity.remark;
             dto.CreateTime = entity.create_time;
             dto.Source = entity.source;
             return dto;

@@ -27,6 +27,8 @@ namespace LuoliDatabase.Extensions
             entity.target_proxy = dto.TargetProxy;
             entity.goods= JsonSerializer.Serialize(dto.Goods);
             entity.coupon = dto.Coupon;
+            entity.last_name = dto.LastName;
+            entity.remark = dto.Remark;
             return entity;
 
         }
