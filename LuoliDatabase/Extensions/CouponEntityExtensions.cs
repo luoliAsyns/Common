@@ -31,6 +31,7 @@ namespace LuoliDatabase
             dto.Coupon = entity.coupon;
             dto.ExternalOrderFromPlatform = entity.external_order_from_platform;
             dto.ExternalOrderTid = entity.external_order_tid;
+            dto.ProxyOrderId = entity.proxy_order_id;
 
             return dto;
 

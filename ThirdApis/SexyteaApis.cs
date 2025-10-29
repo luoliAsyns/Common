@@ -168,7 +168,7 @@ namespace ThirdApis
                 decimal discountAmount = responseObj.RootElement.GetProperty("data").GetProperty("discountAmount").GetDecimal();
                 string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
-                if (Math.Abs(finalAmount + discountAmount - consumeAmount) <0.02m)
+                if ((finalAmount + discountAmount - consumeAmount) <0.02m)
                 {
                     _logger.Info($"订单创建成功, orderNo:[{orderNo}], 订单金额:[{finalAmount + discountAmount}]");
                     return (true, orderNo, (finalAmount + discountAmount) * 0.8m);

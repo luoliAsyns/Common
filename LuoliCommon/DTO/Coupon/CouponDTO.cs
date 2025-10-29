@@ -32,6 +32,8 @@ public class CouponDTO
     /// </summary>           
     public string ExternalOrderTid {get;set;}
 
+    public string ProxyOrderId { get; set; }
+
     /// <summary>
     /// Desc:实付金额，和external order 中的payment一致
     /// Default:
