@@ -56,6 +56,7 @@ public class AsynsApis
     private string Url_Coupon_Query { get { return Url_Coupon + "api/coupon/query"; } }
     private string Url_Coupon_PageQuery { get { return Url_Coupon + "api/coupon/page-query"; } }
     private string Url_Coupon_Update { get { return Url_Coupon + "api/coupon/update"; } }
+    private string Url_Coupon_UpdateErrorCode { get { return Url_Coupon + "api/coupon/update-error"; } }
     private string Url_Coupon_Validate { get { return Url_Coupon + "api/coupon/validate"; } }
     private string Url_Coupon_Invalidate { get { return Url_Coupon + "api/coupon/invalidate"; } }
 
@@ -608,6 +609,45 @@ public class AsynsApis
         }
     }
 
+    public async Task<ApiResponse<bool>> CouponUpdateErrorCode(LuoliCommon.DTO.Coupon.UpdateErrorCodeRequest ur)
+    {
+        try
+        {
+            var url = Url_Coupon_UpdateErrorCode;
+
+            var bodyStr = JsonSerializer.Serialize(ur);
+
+            var response = await ApiCaller.PostAsync(url, bodyStr);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.CouponUpdateErrorCode failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.CouponUpdateErrorCode failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
 
 
     #endregion

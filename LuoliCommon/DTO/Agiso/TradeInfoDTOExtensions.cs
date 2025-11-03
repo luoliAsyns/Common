@@ -27,19 +27,23 @@ namespace LuoliCommon.DTO.Agiso
 
 
             dto.SubOrders = tradeInfo.Data.Orders;
-
+            //一笔多spu sku 订单
+            //TargetProxy以第一个sku为准
             dto.TargetProxy = getProxy(tradeInfo.Data.Orders.First());
 
             dto.CreateTime = DateTime.Parse(tradeInfo.Data.Created);
             dto.UpdateTime = dto.CreateTime;
-            dto.PayAmount = tradeInfo.Data.Orders.Sum(o=> decimal.Parse(o.DivideOrderFee));
+
+            //一笔多spu sku 订单
+            //金额以在目标sku范围内的为准
+            //例如本后台只卖茶颜，那订单中的星巴克金额就不应该计入
+            dto.PayAmount = tradeInfo.Data.Orders.Where(order=> getProxy(order) != ETargetProxy.Default).Sum(o=> decimal.Parse(o.DivideOrderFee));
 
             dto.FromPlatform = tradeInfo.Data.Platform;
             dto.Tid = tradeInfo.Data.Tid.ToString();
             dto.Status = tradeInfo.Data.Status switch
             {
                 "WAIT_SELLER_SEND_GOODS" => EExternalOrderStatus.Pulled,
-                //"WAIT_BUYER_PAY" => EExternalOrderStatus.Pulled,
 
                 "TRADE_CLOSED" => EExternalOrderStatus.Refunding,
                 //这里理论上只会收到付款和退款两种状态的订单

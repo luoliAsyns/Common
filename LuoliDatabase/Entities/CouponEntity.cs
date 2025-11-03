@@ -73,6 +73,7 @@ namespace LuoliDatabase.Entities
            /// Nullable:False
            /// </summary>           
            public byte status {get;set;}
+        public int error_code {get;set;}
 
 
         public string short_url { get; set; }

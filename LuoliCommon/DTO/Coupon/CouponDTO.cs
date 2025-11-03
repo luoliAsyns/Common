@@ -54,6 +54,7 @@ public class CouponDTO
     /// Nullable:False
     /// </summary>           
     public ECouponStatus Status {get;set;}
+    public ECouponErrorCode ErrorCode { get; set; }
 
     public string ShortUrl { get; set; }
 

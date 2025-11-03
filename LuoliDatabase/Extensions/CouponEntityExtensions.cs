@@ -28,6 +28,7 @@ namespace LuoliDatabase
             dto.ShortUrl = entity.short_url;
             dto.RawUrl = entity.raw_url;
             dto.Status = (ECouponStatus)entity.status ;
+            dto.ErrorCode = (ECouponErrorCode)entity.error_code;
             dto.Coupon = entity.coupon;
             dto.ExternalOrderFromPlatform = entity.external_order_from_platform;
             dto.ExternalOrderTid = entity.external_order_tid;

@@ -34,7 +34,7 @@ namespace LuoliDatabase.Extensions
             entity.available_balance = dto.AvailableBalance;
             entity.external_order_from_platform = dto.ExternalOrderFromPlatform;
             entity.external_order_tid = dto.ExternalOrderTid;
-            
+            entity.error_code = (int) dto.ErrorCode;
             return entity;
 
             // return new CouponEntity();
