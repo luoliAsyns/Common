@@ -1,33 +1,32 @@
 ﻿
 
+using LuoliCommon.Entities;
+using ThirdApis;
+
 namespace GatewayService.User
 {
     public class UserRepository : IUserRepository
     {
 
-      
-        public UserRepository()
+        private readonly AsynsApis _asynsApis;
+        public UserRepository(AsynsApis asynsApis)
         {
+            _asynsApis = asynsApis;
         }
 
-        public async Task<(bool, string)> ChangePassword(string userName, string newPassword)
+        public async Task<ApiResponse<bool>> ChangePassword(string userName, string newPassword)
         {
-            throw new NotImplementedException();
+            return await _asynsApis.UserChangePassword(userName, newPassword);
         }
 
-        public async Task<(bool, string)> Login(string userName, string password)
+        public async Task<ApiResponse<bool>> Login(string userName, string password)
         {
-            throw new NotImplementedException();
+            return await _asynsApis.UserLogin(userName, password);
         }
 
-        public async Task<(bool, string)> Logout(string userName)
+        public async Task<ApiResponse<string>> Register(string userName, string phoneNum, bool genter)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<(bool, string)> Register(string userName, string phoneNum, bool genter)
-        {
-            throw new NotImplementedException();
+            return await _asynsApis.UserRegister(userName, phoneNum, genter);
         }
     }
 }

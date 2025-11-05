@@ -1,6 +1,7 @@
 using LuoliCommon.DTO.ConsumeInfo;
 using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
+using LuoliCommon.DTO.User;
 using LuoliCommon.Entities;
 using LuoliCommon.Enums;
 using LuoliCommon.Logger;
@@ -77,6 +78,23 @@ public class AsynsApis
     private string Url_ConsumeInfo_Update { get { return Url_ConsumeInfo + "api/consume-info/update"; } }
     private string Url_ConsumeInfo_Query { get { return Url_ConsumeInfo + "api/consume-info/query"; } }
     private string Url_ConsumeInfo_Insert { get { return Url_ConsumeInfo + "api/consume-info/insert"; } }
+
+    #endregion
+
+    #region user url
+    private string Url_User
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_targetIp))
+                return "http://user-service:8080/";
+            else
+                return _targetIp;
+        }
+    }
+    private string Url_User_Login { get { return Url_User + "api/user/login"; } }
+    private string Url_User_ChangePassword { get { return Url_User + "api/user/change-password"; } }
+    private string Url_User_Register { get { return Url_User + "api/user/register"; } }
 
     #endregion
 
@@ -318,7 +336,6 @@ public class AsynsApis
         }
     }
 
-
     public async Task<ApiResponse<List<CouponDTO>>> CouponValidate(string[] coupons, ECouponStatus status)
     {
         var resp = new ApiResponse<List<CouponDTO>>();
@@ -358,7 +375,6 @@ public class AsynsApis
             return resp;
         }
     }
-
 
     public async Task<ApiResponse<bool>> CouponInvalidate(string coupon)
     {
@@ -854,7 +870,132 @@ public class AsynsApis
 
     #endregion
 
-    #region 2
+    #region UserService apis
+
+    public async Task<ApiResponse<bool>> UserLogin(string userName, string password)
+    {
+        try
+        {
+            var url = $"{Url_User_Login}";
+            var response = await ApiCaller.PostAsync(url, JsonSerializer.Serialize(new LoginRequest()
+            {
+                UserName = userName,
+                Password = password
+            }));
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.UserLogin failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.UserLogin failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<bool>> UserChangePassword(string userName, string newPassword)
+    {
+        try
+        {
+            var url = $"{Url_User_ChangePassword}";
+            var response = await ApiCaller.PostAsync(url, JsonSerializer.Serialize(new ChangePasswordRequest()
+            {
+                UserName = userName,
+                Password = newPassword
+            }));
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.UserChangePassword failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<bool>();
+                resp.data = false;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<bool>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.UserChangePassword failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<bool>();
+            resp.data = false;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<string>> UserRegister(string userName, string phone, bool gender)
+    {
+        try
+        {
+            var url = $"{Url_User_Register}";
+            var response = await ApiCaller.PostAsync(url, JsonSerializer.Serialize(new RegisterRequest()
+            {
+                UserName = userName,
+                Phone = phone,
+                Gender = gender
+            }));
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.UserRegister failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<string>();
+                resp.data = string.Empty;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<string>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.UserRegister failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<string>();
+            resp.data = string.Empty;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
     #endregion
 
     #region 3
