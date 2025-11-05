@@ -1,50 +1,33 @@
 ﻿
-namespace ThirdApis.Services.User
+
+namespace GatewayService.User
 {
-
-
     public class UserRepository : IUserRepository
     {
 
-        //public MUser ValidateUser(string username, string password)
-        //{
-        //    string key = $"user.{username}";
-        //    if(RedisHelper.Exists(key))
-        //        return RedisHelper.Get<MUser>(key);
+      
+        public UserRepository()
+        {
+        }
 
-        //    var pwd = SSha256.ComputeHash(password);
-        //    MUser user = Program.SqlClient.Queryable<MUser>()
-        //        .Where(u =>
-        //            u.username == username &&
-        //            u.password == pwd)
-        //        .First();
+        public async Task<(bool, string)> ChangePassword(string userName, string newPassword)
+        {
+            throw new NotImplementedException();
+        }
 
-        //    if (user is null)
-        //        return user;
+        public async Task<(bool, string)> Login(string userName, string password)
+        {
+            throw new NotImplementedException();
+        }
 
-        //    RedisHelper.Set(key, user, 3600);
+        public async Task<(bool, string)> Logout(string userName)
+        {
+            throw new NotImplementedException();
+        }
 
-        //    return user;
-        //}
-
-        
-        //public MUser GetUser(string username)
-        //{
-        //    string key = $"user.{username}";
-        //    if (RedisHelper.Exists(key))
-        //        return RedisHelper.Get<MUser>(key);
-
-        //    MUser user = Program.SqlClient.Queryable<MUser>()
-        //        .Where(u =>
-        //            u.username == username )
-        //        .First();
-
-        //    if (user is null)
-        //        return user;
-
-        //    RedisHelper.Set(key, user, 3600);
-
-        //    return user;
-        //}
+        public async Task<(bool, string)> Register(string userName, string phoneNum, bool genter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

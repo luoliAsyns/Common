@@ -31,7 +31,6 @@ namespace LuoliDatabase.Extensions
 
 
             entity.birthday = null;
-            entity.status = true;
             entity.is_deleted = false;
             entity.dept_id = 1;
 

@@ -58,12 +58,6 @@ namespace LuoliDatabase.Entities
            /// </summary>           
            public string real_name {get;set;}
 
-           /// <summary>
-           /// Desc:用户状态：0-禁用，1-正常，2-待审核，3-已注销
-           /// Default:true
-           /// Nullable:False
-           /// </summary>           
-           public bool status {get;set;}
 
            /// <summary>
            /// Desc:性别：0-未知，1-男，2-女
