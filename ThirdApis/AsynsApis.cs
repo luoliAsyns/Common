@@ -7,6 +7,7 @@ using LuoliCommon.Enums;
 using LuoliCommon.Logger;
 using LuoliUtils;
 using MethodTimer;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace ThirdApis;
@@ -34,7 +35,8 @@ public class AsynsApis
     
     private string Url_ExternalOrder_Insert { get { return Url_ExternalOrder + "api/external-order/insert"; } }
     private string Url_ExternalOrder_Delete { get { return Url_ExternalOrder + "api/external-order/delete"; } }  
-    private string Url_ExternalOrder_Query { get { return Url_ExternalOrder + "api/external-order/query"; } } 
+    private string Url_ExternalOrder_Query { get { return Url_ExternalOrder + "api/external-order/query"; } }
+    private string Url_ExternalOrder_PageQuery { get { return Url_ExternalOrder + "api/external-order/page-query"; } }
     private string Url_ExternalOrder_Update { get { return Url_ExternalOrder + "api/external-order/update"; } }
 
     #endregion
@@ -212,6 +214,46 @@ public class AsynsApis
             _logger.Error(ex.Message);
 
             var resp = new ApiResponse<ExternalOrderDTO>();
+            resp.data = null;
+            resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+            resp.msg = "未知异常";
+
+            return resp;
+        }
+    }
+
+    public async Task<ApiResponse<PageResult<ExternalOrderDTO>>> ExternalOrderPageQuery( int page,
+             int size,
+             DateTime? from,
+             DateTime? to)
+    {
+        try
+        {
+            var url = $"{Url_ExternalOrder_PageQuery}?page={page}&size={size}&from={from}&to={to}";
+            var response = await ApiCaller.GetAsync(url);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                _logger.Error($"AsynsApis.ExternalOrderPageQuery failed, StatusCode:[{response.StatusCode}]");
+                var resp = new ApiResponse<PageResult<ExternalOrderDTO>>();
+                resp.data = null;
+                resp.code = LuoliCommon.Enums.EResponseCode.Fail;
+                resp.msg = errorMessage;
+                return resp;
+            }
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var successResp = JsonSerializer.Deserialize<ApiResponse<PageResult<ExternalOrderDTO>>>(resultStr, _options);
+
+            return successResp;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"AsynsApis.ExternalOrderPageQuery failed");
+            _logger.Error(ex.Message);
+
+            var resp = new ApiResponse<PageResult<ExternalOrderDTO>>();
             resp.data = null;
             resp.code = LuoliCommon.Enums.EResponseCode.Fail;
             resp.msg = "未知异常";

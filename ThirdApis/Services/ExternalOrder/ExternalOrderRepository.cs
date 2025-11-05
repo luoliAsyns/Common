@@ -49,6 +49,11 @@ namespace ThirdApis.Services.ExternalOrder
             return result;
         }
 
+        public async Task<ApiResponse<PageResult<ExternalOrderDTO>>> PageQueryAsync(int page = 1, int size = 10, DateTime? startTime = null, DateTime? endTime = null)
+        {
+            return await _asynsApis.ExternalOrderPageQuery(page, size, startTime, endTime);
+        }
+
         public async Task<ApiResponse<bool>> Update(UpdateRequest ur)
         {
             var result = await _asynsApis.ExternalOrderUpdate(ur);
