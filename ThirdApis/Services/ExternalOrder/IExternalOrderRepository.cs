@@ -2,6 +2,7 @@
 
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Entities;
+using LuoliCommon.Enums;
 
 namespace ThirdApis.Services.ExternalOrder
 {

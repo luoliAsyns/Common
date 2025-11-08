@@ -67,7 +67,7 @@ namespace LuoliCommon.Logger
                                 // Loki 时间戳（毫秒级 Unix 时间）
                                 $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}000000",
                                 // 日志内容（可包含结构化数据）
-                                $"[{DateTime.UtcNow:o}] {message}"
+                                message
                             }}
                         }
                     }

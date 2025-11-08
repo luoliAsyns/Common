@@ -35,8 +35,11 @@ namespace ThirdApis
         //因为有积点，这个可以算订单我需要付多少钱
         private  string R7_Url_OrderPayCal = "https://miniapp.sexytea2013.com/api/common/pay/queryMixPayPrepareInfo";
 
+        //查询订单
         private string R8_Url_OrderDetail = "https://miniapp.sexytea2013.com/api/v5/order/detail";
 
+        //订单退款
+        private string R9_Url_OrderRefund = "https://miniapp.sexytea2013.com/api/mall/refundAll";
 
 
         private string W1_Url_Regions = "https://miniapp.sexytea2013.com/api/v2/branch/regions";
@@ -295,6 +298,42 @@ namespace ThirdApis
             }
         }
 
+
+        public async Task<(bool,  string)> OrderRefund(Account account, string orderNo)
+        {
+            bool result = false;
+            string msg = string.Empty;
+            try
+            {
+
+                Dictionary<string, dynamic> body = new();
+
+                body.Add("orderNo", orderNo);
+
+                var response = await ApiCaller.PostAsync(R9_Url_OrderRefund, JsonSerializer.Serialize(body), isFormUrlEncode: true);
+
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    msg = $"HttpStatusCode: {response.StatusCode}";
+                    _logger.Error($"SexyteaApis, OrderRefund failed, StatusCode:[{response.StatusCode}]");
+                    return (result, msg);
+                }
+
+                // 解析 JSON 并直接获取根节点
+                JsonDocument responseObj = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                int code = responseObj.RootElement.GetProperty("code").GetInt32();
+                msg = responseObj.RootElement.GetProperty("msg").GetString();
+
+                return (code == 200, msg);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"SexyteaApis, OrderRefund failed, sexytea orderNo:{orderNo}");
+                _logger.Error(ex.Message);
+                return (result, ex.Message);
+            }
+        }
+
         public  async Task<List<string>> GetRegions()
         {
             List<string> cities = new List<string>();
@@ -419,7 +458,6 @@ namespace ThirdApis
 
             Dictionary<string, dynamic> header = new(4);
             header.Add("token", account.Token);
-
 
             var response = await ApiCaller.GetAsync(R8_Url_OrderDetail + "/" + orderNo, headers: header);
 
