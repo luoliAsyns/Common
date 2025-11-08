@@ -278,7 +278,6 @@ namespace ThirdApis
             orderRefundDto.Sign = signValue;
             orderRefundDto.Timestamp = timestamp;
             orderRefundDto.Aopic = aopic;
-            orderRefundDto.FromPlatform = fromPlatformValue;
 
 
             return (true, "", orderRefundDto);

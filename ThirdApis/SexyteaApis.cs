@@ -305,12 +305,14 @@ namespace ThirdApis
             string msg = string.Empty;
             try
             {
+                Dictionary<string, dynamic> header = new(4);
+                header.Add("token", account.Token);
 
                 Dictionary<string, dynamic> body = new();
 
                 body.Add("orderNo", orderNo);
 
-                var response = await ApiCaller.PostAsync(R9_Url_OrderRefund, JsonSerializer.Serialize(body), isFormUrlEncode: true);
+                var response = await ApiCaller.PostAsync(R9_Url_OrderRefund, JsonSerializer.Serialize(body), header, isFormUrlEncode: true);
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {

@@ -13,9 +13,9 @@ namespace LuoliCommon.DTO.Agiso
         public long Timestamp { get; set; }
         public long Aopic { get; set; }
         public string Sign { get; set; }
-        public string FromPlatform { get; set; }
 
 
+        public string Platform { get; set; }
       
         [Required(ErrorMessage = "退款Id不能为空")]
         public long RefundId { get; set; }
