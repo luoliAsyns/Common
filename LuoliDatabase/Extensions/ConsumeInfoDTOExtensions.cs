@@ -22,6 +22,7 @@ namespace LuoliDatabase.Extensions
                 return null;
 
             var entity = new ConsumeInfoEntity();
+            entity.id=dto.Id;
             entity.source = dto.Source;
             entity.goods_type = dto.GoodsType;
             entity.target_proxy = dto.TargetProxy;
