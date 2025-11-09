@@ -7,6 +7,7 @@
         /// hashtable
         /// </summary>
         public static string SkuId2Proxy = "skuid2proxy";
+        public static string AgisoAccessToken = "agiso_access_token";
 
 
         //用于去重
