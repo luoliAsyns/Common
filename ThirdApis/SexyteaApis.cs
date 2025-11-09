@@ -298,7 +298,6 @@ namespace ThirdApis
             }
         }
 
-
         public async Task<(bool,  string)> OrderRefund(Account account, string orderNo)
         {
             bool result = false;
@@ -335,6 +334,25 @@ namespace ThirdApis
                 return (result, ex.Message);
             }
         }
+
+        public async Task<dynamic> UserInfo(Account account)
+        {
+
+            Dictionary<string, dynamic> header = new(4);
+            header.Add("token", account.Token);
+
+            var response = await ApiCaller.GetAsync(R2_Url_UserInfo, headers: header);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _logger.Error($"SexyteaApis, UserInfo failed, StatusCode:[{response.StatusCode}]");
+                return null;
+            }
+            var result = JsonSerializer.Deserialize<dynamic>(await response.Content.ReadAsStringAsync());
+            return result;
+
+        }
+
 
         public  async Task<List<string>> GetRegions()
         {
