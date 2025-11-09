@@ -46,6 +46,12 @@ namespace LuoliCommon.DTO.Coupon
                 return true;
             }
 
+            if (coupon.Status == ECouponStatus.Recycled && e == EEvent.Receive_Manual_Recover_Coupon)
+            {
+                coupon.Status = ECouponStatus.Shipped;
+                return true;
+            }
+
             if (coupon.Status == ECouponStatus.Shipped && e == EEvent.Placed)
             {
                 coupon.Status = ECouponStatus.Consumed;

@@ -33,5 +33,9 @@ namespace LuoliCommon.Enums
         PlaceFailed,
 
 
+        [Description("收到手动恢复卡密")]
+        Receive_Manual_Recover_Coupon = 100,
+
+
     }
 }
