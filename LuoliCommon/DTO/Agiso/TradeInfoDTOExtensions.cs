@@ -37,7 +37,7 @@ namespace LuoliCommon.DTO.Agiso
             //一笔多spu sku 订单
             //金额以在目标sku范围内的为准
             //例如本后台只卖茶颜，那订单中的星巴克金额就不应该计入
-            dto.PayAmount = tradeInfo.Data.Orders.Where(order=> getProxy(order) != ETargetProxy.Default).Sum(o=> decimal.Parse(o.DivideOrderFee));
+            dto.PayAmount = tradeInfo.Data.Orders.Where(order=> getProxy(order) != ETargetProxy.Default).Sum(o=> decimal.Parse(o.TotalFee));
 
             dto.FromPlatform = tradeInfo.Data.Platform;
             dto.Tid = tradeInfo.Data.Tid.ToString();
