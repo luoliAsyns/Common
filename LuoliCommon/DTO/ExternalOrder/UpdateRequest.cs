@@ -34,6 +34,12 @@ namespace LuoliCommon.DTO.ExternalOrder
                 return true;
             }
 
+            if (eo.Status == EExternalOrderStatus.Refunding && e == EEvent.Receive_Manual_Recover_Coupon)
+            {
+                eo.Status = EExternalOrderStatus.Pulled;
+                return true;
+            }
+
 
             return false;
         }
