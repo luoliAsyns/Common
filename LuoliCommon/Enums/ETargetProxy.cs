@@ -14,9 +14,9 @@ namespace LuoliCommon.Enums
         Default = 0,
 
         [Description("茶颜悦色")]
-        Sexytea,
+        sexytea,
 
         [Description("M Stand")]
-        MStand,
+        mstand,
     }
 }
