@@ -57,7 +57,7 @@ namespace LuoliDatabase.Extensions
             couponDTO.ExternalOrderFromPlatform = dto.FromPlatform;
 
             couponDTO.Payment = dto.PayAmount;
-            couponDTO.AvailableBalance = couponDTO.Payment;
+            couponDTO.AvailableBalance = couponDTO.CreditLimit = dto.CreditLimit;
             
             couponDTO.Status = ECouponStatus.Generated;
             couponDTO.CreateTime = DateTime.Now;
