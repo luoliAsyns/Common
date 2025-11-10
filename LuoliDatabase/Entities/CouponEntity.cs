@@ -60,12 +60,19 @@ namespace LuoliDatabase.Entities
         /// </summary>           
         public decimal payment {get;set;}
 
-           /// <summary>
-           /// Desc:可用余额
-           /// Default:
-           /// Nullable:False
-           /// </summary>           
-           public decimal available_balance {get;set;}
+        /// <summary>
+        /// Desc:实付金额，和external order 中的credit_limit一致
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public decimal credit_limit { get; set; }
+
+        /// <summary>
+        /// Desc:可用余额
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public decimal available_balance {get;set;}
 
            /// <summary>
            /// Desc:订单状态：ECouponStatus

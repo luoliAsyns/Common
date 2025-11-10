@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace LuoliCommon.DTO.Admin
 {
-    public class SkuIdMapChangeRequest
+    public class SkuIdMapItem
     {
 
-        public string skuId { get; set; }
-        public SkuIdMapItem item { get; set; }
+        public string TargetProxy { get; set; }
+        public decimal CreditLimit { get; set; }
+
     }
 }

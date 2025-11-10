@@ -30,7 +30,7 @@ namespace LuoliDatabase.Extensions
             entity.create_time = dto.CreateTime;
             entity.update_time = dto.UpdateTime;
             entity.content = JsonSerializer.Serialize(dto.SubOrders);
-          
+            entity.credit_limit = dto.CreditLimit;
             entity.buyer_nick = dto.BuyerNick;
             entity.buyer_open_uid = dto.BuyerOpenUid;
             entity.seller_nick = dto.SellerNick;

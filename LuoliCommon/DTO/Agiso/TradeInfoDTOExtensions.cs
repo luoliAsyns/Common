@@ -1,4 +1,5 @@
-﻿using LuoliCommon.DTO.Coupon;
+﻿using LuoliCommon.DTO.Admin;
+using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Enums;
 using System;
@@ -14,7 +15,7 @@ namespace LuoliCommon.DTO.Agiso
     public static class TradeInfoDTOExtensions
     {
 
-        public static ExternalOrderDTO ToExternalOrderDTO(this TradeInfoDTO tradeInfo, Func<Order, ETargetProxy> getProxy)
+        public static ExternalOrderDTO ToExternalOrderDTO(this TradeInfoDTO tradeInfo, Func<Order, SkuIdMapItem> getSkuIdMapItem)
         {
             if (tradeInfo is null)
                 return null;
@@ -23,13 +24,21 @@ namespace LuoliCommon.DTO.Agiso
             if (!tradeInfo.IsSuccess)
                 return null;
 
+
             ExternalOrderDTO dto = new ExternalOrderDTO();
 
 
             dto.SubOrders = tradeInfo.Data.Orders;
+
+
+            var item = getSkuIdMapItem(tradeInfo.Data.Orders.First());
+
             //一笔多spu sku 订单
             //TargetProxy以第一个sku为准
-            dto.TargetProxy = getProxy(tradeInfo.Data.Orders.First());
+            if (EnumHandler.TryParseIgnoringCaseAndSpaces(item.TargetProxy, out ETargetProxy eTargetProxy))
+                dto.TargetProxy = eTargetProxy;
+            else
+                dto.TargetProxy = ETargetProxy.Default;
 
             dto.CreateTime = DateTime.Parse(tradeInfo.Data.Created);
             dto.UpdateTime = dto.CreateTime;
@@ -37,7 +46,16 @@ namespace LuoliCommon.DTO.Agiso
             //一笔多spu sku 订单
             //金额以在目标sku范围内的为准
             //例如本后台只卖茶颜，那订单中的星巴克金额就不应该计入
-            dto.PayAmount = tradeInfo.Data.Orders.Where(order=> getProxy(order) != ETargetProxy.Default).Sum(o=> decimal.Parse(o.TotalFee));
+            dto.PayAmount = tradeInfo.Data.Orders.Where(order=> !(getSkuIdMapItem(order) is null)).Sum(o=> decimal.Parse(o.TotalFee));
+
+            //授信额度从redis里的sku映射表里取
+            dto.CreditLimit = tradeInfo.Data.Orders.Sum(order => {
+                var skuItem = getSkuIdMapItem(order);
+                if (skuItem is null) 
+                    return 0;
+                return skuItem.CreditLimit;
+            });
+
 
             dto.FromPlatform = tradeInfo.Data.Platform;
             dto.Tid = tradeInfo.Data.Tid.ToString();

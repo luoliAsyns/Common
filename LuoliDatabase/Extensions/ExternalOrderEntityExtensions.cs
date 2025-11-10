@@ -33,7 +33,7 @@ namespace LuoliDatabase
             dto.UpdateTime = entity.update_time;
             dto.SubOrders = JsonSerializer.Deserialize<List<Order>>(entity.content);
             dto.PayAmount = entity.payment;
-
+            dto.CreditLimit = entity.credit_limit;
             dto.FromPlatform = entity.from_platform;
             dto.Tid = entity.tid;
             dto.Status = (EExternalOrderStatus)entity.status;

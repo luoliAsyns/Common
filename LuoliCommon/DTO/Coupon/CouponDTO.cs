@@ -40,7 +40,7 @@ public class CouponDTO
     /// Nullable:False
     /// </summary>           
     public decimal Payment {get;set;}
-
+    public decimal CreditLimit { get; set; }
     /// <summary>
     /// Desc:可用余额
     /// Default:

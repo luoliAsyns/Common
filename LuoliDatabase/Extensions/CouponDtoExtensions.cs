@@ -30,6 +30,7 @@ namespace LuoliDatabase.Extensions
             entity.short_url = dto.ShortUrl;
             entity.raw_url = dto.RawUrl;
             entity.proxy_order_id = dto.ProxyOrderId;
+            entity.credit_limit= dto.CreditLimit;
 
             entity.available_balance = dto.AvailableBalance;
             entity.external_order_from_platform = dto.ExternalOrderFromPlatform;

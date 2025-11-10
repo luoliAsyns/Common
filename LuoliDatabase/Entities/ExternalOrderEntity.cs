@@ -93,12 +93,17 @@ namespace LuoliDatabase.Entities
            /// </summary>           
            public decimal payment {get;set;}
 
-           /// <summary>
-           /// Desc: EExternalOrderStatus 订单状态
-           /// Default:
-           /// Nullable:False
-           /// </summary>           
-           public byte status {get;set;}
+        /// <summary>
+        /// 授信额度
+        /// </summary>
+        public decimal credit_limit { get; set; }
+
+        /// <summary>
+        /// Desc: EExternalOrderStatus 订单状态
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public byte status {get;set;}
 
            /// <summary>
            /// Desc:更新时间

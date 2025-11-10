@@ -24,7 +24,7 @@ namespace LuoliDatabase
             dto.UpdateTime = entity.update_time;
             dto.Payment = entity.payment;
             dto.AvailableBalance = entity.available_balance;
-
+            dto.CreditLimit = entity.credit_limit;
             dto.ShortUrl = entity.short_url;
             dto.RawUrl = entity.raw_url;
             dto.Status = (ECouponStatus)entity.status ;

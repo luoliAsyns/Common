@@ -61,6 +61,8 @@ namespace LuoliCommon.DTO.ExternalOrder
         /// </summary>
         public decimal PayAmount { get; set; }
 
+        public decimal CreditLimit { get; set; }
+
         /// <summary>
         /// 交易类型
         /// </summary>
