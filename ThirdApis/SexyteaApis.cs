@@ -121,7 +121,7 @@ namespace ThirdApis
 
         }
 
-        public  async Task<(bool, string, decimal)> OrderCreate(Account account, int branchId, List<OrderItem> orderItems, string lastName, string comments, decimal consumeAmount, bool needToPack = false)
+        public  async Task<(bool, string, decimal)> OrderCreate(Account account, int branchId, List<OrderItem> orderItems, string lastName, string comments, decimal creditLimit, bool needToPack = false)
         {
             Dictionary<string, dynamic> body = new();
 
@@ -171,13 +171,13 @@ namespace ThirdApis
                 decimal discountAmount = responseObj.RootElement.GetProperty("data").GetProperty("discountAmount").GetDecimal();
                 string orderNo = responseObj.RootElement.GetProperty("data").GetProperty("orderNo").GetString();
 
-                if ((finalAmount + discountAmount - consumeAmount) <0.02m)
+                if ((finalAmount + discountAmount - creditLimit) <0.02m)
                 {
                     _logger.Info($"订单创建成功, orderNo:[{orderNo}], 订单金额:[{finalAmount + discountAmount}]");
-                    return (true, orderNo, (finalAmount + discountAmount) * 0.8m);
+                    return (true, orderNo, finalAmount + discountAmount);
                 }
 
-                _logger.Error($"SexyteaApis, OrderCreate failed, actual amount:{finalAmount}, target amount:{consumeAmount}");
+                _logger.Error($"SexyteaApis, OrderCreate failed, 会员余额支付:{finalAmount + discountAmount}，其中{discountAmount}是充值赠送, 卡密额度:{creditLimit}");
                 return (false, "unknown exception", -1);
             }
             catch (Exception ex)
