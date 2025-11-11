@@ -19,6 +19,8 @@ namespace LuoliCommon.DTO.ConsumeInfo.Sexytea
         public string openId { get; set; }
         public string unionId { get; set; }
 
+        public string phone { get; set; }
+
 
     }
 }

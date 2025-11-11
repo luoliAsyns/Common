@@ -14,5 +14,7 @@ namespace LuoliCommon.DTO.ConsumeInfo.Sexytea
         public DateTime Exp { get; set; }
         public string status { get; set; }
 
+        public string phone { get; set; }
+
     }
 }

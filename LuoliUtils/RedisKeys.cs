@@ -13,11 +13,16 @@
         //用于去重
         public static string ReceivedExternalOrder = "received.external.orders";
         public static string NotUsedCoupons = "notused.coupons";
-        
 
-     
-        public static string BranchId2City = "sexytea.branchid2city";
+
+        //Sexytea相关
+        public static string SexyteaBranchId2City = "sexytea.branchid2city";
         public static string SexyteaTokenAccount = "sexytea.token";
+        public static string PlaceOrderButtonEnable = "place.order.button.enable"; 
+
+
+
+
 
         public static string WWMsgTemplate = "msg.template";
 
