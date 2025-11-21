@@ -18,7 +18,8 @@
         //Sexytea相关
         public static string SexyteaBranchId2City = "sexytea.branchid2city";
         public static string SexyteaTokenAccount = "sexytea.token";
-        public static string PlaceOrderButtonEnable = "place.order.button.enable"; 
+        public static string PlaceOrderButtonEnable = "place.order.button.enable";
+        public static string SexyteaBannedBranchId = "sexytea.banned.branchids";
 
 
 
@@ -26,6 +27,7 @@
 
         public static string WWMsgTemplate = "msg.template";
 
+        public static string NotifyUsers = "notify.users";
 
         //publish channels
         public static string Pub_RefreshShipStatus="refresh.ship.status";
