@@ -25,13 +25,16 @@ namespace LuoliCommon.DTO.Agiso
                 return null;
 
 
-            ExternalOrderDTO dto = new ExternalOrderDTO();
-
-
-            dto.SubOrders = tradeInfo.Data.Orders;
 
 
             var item = getSkuIdMapItem(tradeInfo.Data.Orders.First());
+
+            if(item is null)
+                return null;
+
+            ExternalOrderDTO dto = new ExternalOrderDTO();
+
+            dto.SubOrders = tradeInfo.Data.Orders;
 
             //一笔多spu sku 订单
             //TargetProxy以第一个sku为准
