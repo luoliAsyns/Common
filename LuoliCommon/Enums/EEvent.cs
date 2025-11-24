@@ -32,6 +32,12 @@ namespace LuoliCommon.Enums
         [Description("下单失败")]
         PlaceFailed,
 
+        [Description("代理订单退款")]
+        ProxyRefund,
+
+        [Description("代理订单查询")]
+        ProxyQuery,
+
 
         [Description("收到手动恢复卡密")]
         Receive_Manual_Recover_Coupon = 100,

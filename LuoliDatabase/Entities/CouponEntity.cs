@@ -54,6 +54,7 @@ namespace LuoliDatabase.Entities
            public string proxy_order_id { get; set; }
 
         public string proxy_open_id { get; set; }
+        public decimal proxy_payment { get; set; }
 
         /// <summary>
         /// Desc:实付金额，和external order 中的payment一致

@@ -30,7 +30,11 @@ namespace LuoliDatabase
             dto.Status = (ECouponStatus)entity.status ;
             dto.ErrorCode = (ECouponErrorCode)entity.error_code;
             dto.Coupon = entity.coupon;
+
             dto.ProxyOpenId = entity.proxy_open_id;
+            dto.ProxyPayment = entity.proxy_payment;
+            dto.ProxyOrderId = entity.proxy_order_id;
+
             dto.ExternalOrderFromPlatform = entity.external_order_from_platform;
             dto.ExternalOrderTid = entity.external_order_tid;
             dto.ProxyOrderId = entity.proxy_order_id;

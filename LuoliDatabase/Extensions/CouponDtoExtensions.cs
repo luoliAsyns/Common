@@ -31,6 +31,7 @@ namespace LuoliDatabase.Extensions
             entity.raw_url = dto.RawUrl;
             entity.proxy_order_id = dto.ProxyOrderId;
             entity.proxy_open_id = dto.ProxyOpenId;
+            entity.proxy_payment = dto.ProxyPayment;
             entity.credit_limit= dto.CreditLimit;
 
             entity.available_balance = dto.AvailableBalance;

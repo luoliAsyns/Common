@@ -26,6 +26,9 @@ namespace LuoliCommon.Enums
         [Description("消费失败")]
         ConsumeFailed,
 
+        [Description("已在代理平台退款")]
+        ProxyRefund = 25,
+
         [Description("已作废")]
         Recycled=30,
         [Description("作废失败")]

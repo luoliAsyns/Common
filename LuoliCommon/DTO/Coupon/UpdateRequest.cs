@@ -21,6 +21,8 @@ namespace LuoliCommon.DTO.Coupon
 
         public bool UpdateStatus(CouponDTO coupon, EEvent e)
         {
+            if (e == EEvent.ProxyQuery)
+                return true;
 
             if (coupon.Status == ECouponStatus.Generated && e == EEvent.Coupon_Shipment)
             {
@@ -61,6 +63,13 @@ namespace LuoliCommon.DTO.Coupon
             if (coupon.Status == ECouponStatus.Shipped && e == EEvent.PlaceFailed)
             {
                 coupon.Status = ECouponStatus.ConsumeFailed;
+                return true;
+            }
+
+
+            if (coupon.Status == ECouponStatus.Consumed && e == EEvent.ProxyRefund)
+            {
+                coupon.Status = ECouponStatus.ProxyRefund;
                 return true;
             }
 

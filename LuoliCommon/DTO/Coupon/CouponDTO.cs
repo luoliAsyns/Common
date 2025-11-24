@@ -34,6 +34,7 @@ public class CouponDTO
 
     public string ProxyOrderId { get; set; }
     public string ProxyOpenId { get; set; }
+    public decimal ProxyPayment { get; set; }
 
     /// <summary>
     /// Desc:实付金额，和external order 中的payment一致
