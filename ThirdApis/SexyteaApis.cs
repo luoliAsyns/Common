@@ -121,7 +121,7 @@ namespace ThirdApis
 
         }
 
-        public  async Task<(bool, string, decimal)> OrderCreate(Account account, int branchId, List<OrderItem> orderItems, string lastName, string comments, decimal creditLimit, bool needToPack = false)
+        public  async Task<(bool, string, decimal)> OrderCreate(Account account, int branchId, List<OrderItem> orderItems, string lastName, string comments, decimal creditLimit, int selectPoint, bool needToPack = false)
         {
             Dictionary<string, dynamic> body = new();
 
@@ -134,7 +134,7 @@ namespace ThirdApis
                 body.Add("platform", "APP_SELF_SERVICE");
                 body.Add("serviceType", "RESTAURANT");
                 body.Add("groupBuyNo", "");
-                body.Add("selectPoint", 1);  //意思是优先使用积点
+                body.Add("selectPoint", selectPoint); // 1: 优先使用积点   0: 不使用积点
                 body.Add("needToPack", needToPack);
                 // 使用Newtonsoft.Json构建userTitle，避免手动拼接JSON
                 body.Add("userTitle", new
@@ -335,7 +335,7 @@ namespace ThirdApis
             }
         }
 
-        public async Task<dynamic> UserInfo(Account account)
+        public async Task<string> UserInfo(Account account)
         {
 
             Dictionary<string, dynamic> header = new(4);
@@ -348,8 +348,7 @@ namespace ThirdApis
                 _logger.Error($"SexyteaApis, UserInfo failed, StatusCode:[{response.StatusCode}]");
                 return null;
             }
-            var result = JsonSerializer.Deserialize<dynamic>(await response.Content.ReadAsStringAsync());
-            return result;
+            return await response.Content.ReadAsStringAsync();
 
         }
 
