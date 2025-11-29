@@ -56,7 +56,7 @@ namespace LuoliCommon.DTO.Agiso
                 var skuItem = getSkuIdMapItem(order);
                 if (skuItem is null) 
                     return 0;
-                return skuItem.CreditLimit;
+                return skuItem.CreditLimit * order.Num;
             });
 
 
