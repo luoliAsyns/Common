@@ -188,7 +188,7 @@ namespace ThirdApis
             }
         }
 
-        public  async Task<bool> OrderPay(Account account, string orderNo, decimal payAmount)
+        public  async Task<(bool, string)> OrderPay(Account account, string orderNo, decimal payAmount)
         {
             Dictionary<string, dynamic> body = new();
 
@@ -212,7 +212,7 @@ namespace ThirdApis
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.Error($"SexyteaApis, OrderPay failed, StatusCode:[{response.StatusCode}]");
-                    return false;
+                    return (false, "network issue");
                 }
 
                 // 解析 JSON 并直接获取根节点
@@ -223,23 +223,23 @@ namespace ThirdApis
                 if (code != 200)
                 {
                     _logger.Error($"SexyteaApis, OrderPay failed, responseObj.code:[{code}], msg:[{msg}]");
-                    return false;
+                    return (false, msg);
                 }
                 bool ok = responseObj.RootElement.GetProperty("ok").GetBoolean();
                 if (ok)
                 {
                     _logger.Info($"订单付款成功, orderNo:[{orderNo}], 支付的会员余额:[{payAmount}]");
-                    return true;
+                    return (true, string.Empty);
                 }
 
                 _logger.Error($"SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
-                return false;
+                return (false, "unknown case");
             }
             catch (Exception ex)
             {
                 _logger.Error($"SexyteaApis, OrderPay failed, consume_order_no:{orderNo}");
                 _logger.Error(ex.Message);
-                return false;
+                return (false, ex.Message);
             }
         }
 
