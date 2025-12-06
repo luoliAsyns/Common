@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace LuoliUtils
             foreach(var pair in accounts)
             {
                 var account = pair.Value;
-                if ((account.Exp - DateTime.Now)> TimeSpan.FromMinutes(10))
+                if ((account.Exp - DateTime.Now)> TimeSpan.FromMinutes(10) && account.TodayOrdersCount < 99)
                     return true;
             }
             
@@ -34,13 +35,17 @@ namespace LuoliUtils
 
         public Account Recommend(string coupon, Dictionary<string, Account> accounts)
         {
-            var validAccounts = accounts.Values.Where(t => (t.Exp - DateTime.Now) > TimeSpan.FromMinutes(10)).ToList();
+            var validAccounts = accounts.Values.Where(t => 
+                    (t.Exp - DateTime.Now) > TimeSpan.FromMinutes(10)
+                    && t.TodayOrdersCount < 99
+                    ).ToList();
 
             // 边界校验：列表不能为空
             if (validAccounts == null || validAccounts.Count == 0)
             {
-                throw new ArgumentNullException(nameof(validAccounts), "元素列表不能为空");
+                return null;
             }
+
             if(validAccounts.Count == 1)
                 return validAccounts[0];
 
