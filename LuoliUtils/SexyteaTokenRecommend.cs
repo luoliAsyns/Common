@@ -20,6 +20,19 @@ namespace LuoliUtils
         }
 
 
+        public void MergeData(Dictionary<string, Account> accounts, Dictionary<string, int> orderCounts)
+        {
+            foreach (var kvp in accounts)
+            {
+                string key = kvp.Key;       // 共享的key（如用户ID/IP等）
+
+                if (orderCounts.TryGetValue(key, out int count))
+                    kvp.Value.TodayOrdersCount = count;
+                else
+                    kvp.Value.TodayOrdersCount = 0;
+            }
+        }
+
         public bool ExistValidAcc(Dictionary<string, Account> accounts)
         {
             foreach(var pair in accounts)
