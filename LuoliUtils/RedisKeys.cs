@@ -20,7 +20,6 @@
         //Sexytea相关
         public static string SexyteaBranchId2City = "sexytea.branchid2city";
         public static string SexyteaTokenAccount = "sexytea.tokens"; //hset 多账号
-        public static string SexyteaTokenPlaceOrdersCount = "sexytea.tokens.order.count";
         public static string SexyteaBannedBranchId = "sexytea.banned.branchids";
 
 
