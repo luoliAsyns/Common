@@ -23,7 +23,7 @@ namespace LuoliCommon.DTO.Agiso
         [Required(ErrorMessage = "订单号不能为空")]
         public long biz_order_id { get; set; }         
 
-        [Required(ErrorMessage = "skuid不能为空")]
+        [Required(ErrorMessage = "item_id不能为空")]
         public string item_id { get; set; }           
 
         [Required(ErrorMessage = "卖家seller_id不能为空")]

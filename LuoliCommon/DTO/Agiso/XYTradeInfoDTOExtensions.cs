@@ -44,7 +44,7 @@ namespace LuoliCommon.DTO.Agiso
                 
                 Payment = (tradeInfo.Data.payment / 100.0m).ToString(),
                 PicPath = tradeInfo.Data.item.pic_url,
-                SkuId = tradeInfo.Data.sku.ToString(),
+                SkuId = tradeInfo.Data.sku,
                 DivideOrderFee = (tradeInfo.Data.payment / 100.0m).ToString(),
             };
             dto.SubOrders = new List<Order>() { order} ;
@@ -76,8 +76,9 @@ namespace LuoliCommon.DTO.Agiso
             dto.Tid = tradeInfo.Data.biz_order_id.ToString();
             dto.Status = tradeInfo.Data.order_status switch
             {
-                2 => EExternalOrderStatus.Pulled,
-                
+                2 => EExternalOrderStatus.Pulled, //已付款
+                3 => EExternalOrderStatus.Pulled, //已发货  因为闲鱼可能会自动发货
+
                 _ => throw new Exception($"不支持的订单状态:{tradeInfo.Data.order_status}")
             };
 

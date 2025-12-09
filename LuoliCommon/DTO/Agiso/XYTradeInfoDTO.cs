@@ -37,7 +37,7 @@ namespace LuoliCommon.DTO.Agiso
         public decimal post_fee { get; set; }
         public string seller_nick { get; set; }
         public long ship_time { get; set; }
-        public long sku { get; set; }
+        public string sku { get; set; }
     }
 
     //子订单
