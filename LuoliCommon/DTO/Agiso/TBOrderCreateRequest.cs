@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LuoliCommon.DTO.Agiso
 {
-    public class OrderCreateRequest
+    public class TBOrderCreateRequest
     {
         //这4个从QueryString里取
         public long Timestamp { get; set; }

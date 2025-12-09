@@ -12,10 +12,10 @@ using static Grpc.Core.Metadata;
 
 namespace LuoliCommon.DTO.Agiso
 {
-    public static class TradeInfoDTOExtensions
+    public static class TBTradeInfoDTOExtensions
     {
 
-        public static ExternalOrderDTO ToExternalOrderDTO(this TradeInfoDTO tradeInfo, Func<Order, SkuIdMapItem> getSkuIdMapItem)
+        public static ExternalOrderDTO ToExternalOrderDTO(this TBTradeInfoDTO tradeInfo, Func<Order, SkuIdMapItem> getSkuIdMapItem)
         {
             if (tradeInfo is null)
                 return null;

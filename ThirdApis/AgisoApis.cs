@@ -17,12 +17,25 @@ namespace ThirdApis
 
 
         // 给买家发送旺旺消息
-        private string Url_SendWWMsg = "http://gw.api.agiso.com/alds/WwMsg/Send";
+        //淘宝
+        private string Url_SendWWMsg = "http://gw.api.agiso.com/alds/WwMsg/Send"; 
+        //闲鱼
+        private string Url_SendXYMsg = "http://gw.api.agiso.com/aldsIdle/ImMsg/SendMsg";
+
 
         // 发货
         private string Url_ShipOrder = "http://gw.api.agiso.com/alds/Trade/LogisticsDummySend";
 
+
+        // 查看订单详情
         private string Url_TradeInfo = "http://gw.api.agiso.com/alds/Trade/TradeInfo";
+        private string Url_XYTradeInfo = "http://gw.api.agiso.com/aldsIdle/Order/Detail";
+
+        //闲鱼同意/拒绝退款
+        private string Url_XYAgreeRefund = "http://gw.api.agiso.com/aldsIdle/Refund/AgreeRefund";
+        private string Url_XYRefuseRefund = "http://gw.api.agiso.com/aldsIdle/Refund/RefuseRefund";
+
+
 
 
         private readonly ILogger _logger;
@@ -68,6 +81,51 @@ namespace ThirdApis
                 if (!success)
                 {
                     _logger.Error($"AgisoApis.SendWWMsg failed, full response:[{respStr}]");
+                    msg = responseObj.RootElement.GetProperty("Error_Msg").GetString();
+                }
+            };
+
+            await ActionsOperator.ReTryAction(sendWWMsg);
+
+            return (success, msg);
+        }
+
+        //发送闲鱼消息
+        public async Task<(bool, string)> SendXYMsg(string accessToken, string appSecret, string tid, string message)
+        {
+            Dictionary<string, dynamic> header = new();
+            header["Authorization"] = "Bearer " + accessToken;
+            header["ApiVersion"] = "1";
+
+            //业务参数
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+            var body = new Dictionary<string, string>() { };
+
+            // 订单号
+            body.Add("tid", tid);
+            body.Add("msg", message);
+            body.Add("timestamp", Convert.ToInt64(ts.TotalSeconds).ToString());
+            body.Add("sign", Sign(body, appSecret));
+
+
+            bool success = false;
+            string msg = string.Empty;
+
+            Func<Task> sendWWMsg = async () => {
+                var resp = await ApiCaller.PostAsync(
+                     Url_SendXYMsg,
+                     System.Text.Json.JsonSerializer.Serialize(body),
+                     header, true);
+                string respStr = await resp.Content.ReadAsStringAsync();
+
+                // 请求成功后，取isSuccess  成功了就算了，没成功取 Error_Msg
+                JsonDocument responseObj = JsonDocument.Parse(respStr);
+                success = responseObj.RootElement.GetProperty("IsSuccess").GetBoolean();
+
+                if (!success)
+                {
+                    _logger.Error($"AgisoApis.SendXYMsg failed, full response:[{respStr}]");
                     msg = responseObj.RootElement.GetProperty("Error_Msg").GetString();
                 }
             };
@@ -124,9 +182,8 @@ namespace ThirdApis
         }
 
 
-        //获取订单详情
-
-        public async Task<(bool, TradeInfoDTO)> TradeInfo(string accessToken, string appSecret, string tid)
+        //获取淘宝订单详情
+        public async Task<(bool, TBTradeInfoDTO)> TradeInfo(string accessToken, string appSecret, string tid)
         {
             Dictionary<string, dynamic> header = new();
 
@@ -145,7 +202,7 @@ namespace ThirdApis
 
             bool success = false;
             JsonDocument responseObj= null;
-            TradeInfoDTO tradeInfoDTO = null;
+            TBTradeInfoDTO tradeInfoDTO = null;
 
             Func<Task> getTradeInfo =async () =>
             {
@@ -164,7 +221,7 @@ namespace ThirdApis
                     _logger.Error($"AgisoApis.TradeInfo failed, tid:[{tid}], Error_Msg:[{responseObj.RootElement.GetProperty("Error_Msg").GetString()}]");
                 else
                 {
-                    tradeInfoDTO = System.Text.Json.JsonSerializer.Deserialize<TradeInfoDTO>(respStr);
+                    tradeInfoDTO = System.Text.Json.JsonSerializer.Deserialize<TBTradeInfoDTO>(respStr);
                     File.WriteAllText("tradeinfo" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"), respStr);
                 }
             };
@@ -175,8 +232,57 @@ namespace ThirdApis
         }
 
 
+        public async Task<(bool, XYTradeInfoDTO)> XYTradeInfo(string accessToken, string appSecret, string tid)
+        {
+            Dictionary<string, dynamic> header = new();
 
-        public async Task<(bool, string, OrderCreateRequest)> ValidateOrderCreateAsync(HttpRequest request,string rawJson)
+            header.Add("Authorization", "Bearer " + accessToken);
+            header.Add("ApiVersion", "1");
+
+            //业务参数
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+            var body = new Dictionary<string, string>() { };
+            //订单编号
+            body.Add("tid", tid);
+            body.Add("timestamp", Convert.ToInt64(ts.TotalSeconds).ToString());
+            body.Add("sign", Sign(body, appSecret));
+
+
+            bool success = false;
+            JsonDocument responseObj = null;
+            XYTradeInfoDTO tradeInfoDTO = null;
+
+            Func<Task> getTradeInfo = async () =>
+            {
+                var resp = await ApiCaller.PostAsync(
+                    Url_XYTradeInfo,
+                     System.Text.Json.JsonSerializer.Serialize(body),
+                    header, true);
+
+                string respStr = await resp.Content.ReadAsStringAsync();
+
+                // 请求成功后，取QTY赋值
+                responseObj = JsonDocument.Parse(respStr);
+                success = responseObj.RootElement.GetProperty("IsSuccess").GetBoolean();
+
+                if (!success)
+                    _logger.Error($"AgisoApis.XYTradeInfo failed, tid:[{tid}], Error_Msg:[{responseObj.RootElement.GetProperty("Error_Msg").GetString()}]");
+                else
+                {
+                    tradeInfoDTO = System.Text.Json.JsonSerializer.Deserialize<XYTradeInfoDTO>(respStr);
+                    File.WriteAllText("XYtradeinfo" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"), respStr);
+                }
+            };
+
+            await ActionsOperator.ReTryAction(getTradeInfo);
+
+            return (success, tradeInfoDTO);
+        }
+
+
+        //淘宝创建订单校验，返回TBOrderCreateRequest
+        public async Task<(bool, string, TBOrderCreateRequest)> ValidateTBOrderCreateAsync(HttpRequest request,string rawJson)
         {
             // 提取并验证Timestamp
             if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
@@ -205,7 +311,7 @@ namespace ThirdApis
            
 
             // 4. 反序列化为OrderCreateRequest对象
-            OrderCreateRequest orderCreateDto;
+            TBOrderCreateRequest orderCreateDto;
             try
             {
                 var settings = new JsonSerializerSettings
@@ -214,7 +320,7 @@ namespace ThirdApis
                     Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
                 };
 
-                orderCreateDto = JsonConvert.DeserializeObject<OrderCreateRequest>(rawJson, settings);
+                orderCreateDto = JsonConvert.DeserializeObject<TBOrderCreateRequest>(rawJson, settings);
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
@@ -230,7 +336,8 @@ namespace ThirdApis
             return (true, "", orderCreateDto);
         }
 
-        public async Task<(bool, string, OrderRefundRequest)> ValidateOrderRefundAsync(HttpRequest request, string rawJson)
+        //淘宝退款校验，返回TBOrderRefundRequest
+        public async Task<(bool, string, TBOrderRefundRequest)> ValidateTBOrderRefundAsync(HttpRequest request, string rawJson)
         {
             // 提取并验证Timestamp
             if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
@@ -259,7 +366,7 @@ namespace ThirdApis
 
 
             // 4. 反序列化为OrderRefundRequest对象
-            OrderRefundRequest orderRefundDto;
+            TBOrderRefundRequest orderRefundDto;
             try
             {
                 var settings = new JsonSerializerSettings
@@ -268,7 +375,7 @@ namespace ThirdApis
                     Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
                 };
 
-                orderRefundDto = JsonConvert.DeserializeObject<OrderRefundRequest>(rawJson, settings);
+                orderRefundDto = JsonConvert.DeserializeObject<TBOrderRefundRequest>(rawJson, settings);
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
@@ -283,7 +390,103 @@ namespace ThirdApis
             return (true, "", orderRefundDto);
         }
 
-        public bool ValidateSign(OrderCreateRequest dto, string rawJson, string appSecret)
+
+        //闲鱼创建订单校验，返回XYOrderCreateRequest
+        public async Task<(bool, string, XYOrderCreateRequest)> ValidateXYOrderCreateAsync(HttpRequest request, string rawJson)
+        {
+            // 提取并验证Timestamp
+            if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
+                !long.TryParse(timestampValue, out long timestamp))
+                return (false, "no Timestamp", null);
+
+            // 提取并验证Aopic
+            if (!request.Query.TryGetValue("Aopic", out var aopicValue) ||
+                !long.TryParse(aopicValue, out long aopic))
+                return (false, "no Aopic", null);
+
+
+            // 提取并验证Sign
+            if (!request.Query.TryGetValue("Sign", out var signValue) ||
+                string.IsNullOrWhiteSpace(signValue))
+                return (false, "no Sign", null);
+
+
+
+            // 4. 反序列化为OrderCreateRequest对象
+            XYOrderCreateRequest orderCreateDto;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    FloatParseHandling = FloatParseHandling.Decimal,
+                    Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
+                };
+
+                orderCreateDto = JsonConvert.DeserializeObject<XYOrderCreateRequest>(rawJson, settings);
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                return (false, $"body format not correct: {ex.Message}", null);
+            }
+
+            orderCreateDto.Sign = signValue;
+            orderCreateDto.Timestamp = timestamp;
+            orderCreateDto.Aopic = aopic;
+            orderCreateDto.FromPlatform = "XIANYU";
+
+            return (true, "", orderCreateDto);
+        }
+
+        //闲鱼退款校验，XYOrderRefundRequest
+        public async Task<(bool, string, XYOrderRefundRequest)> ValidateXYOrderRefundAsync(HttpRequest request, string rawJson)
+        {
+            // 提取并验证Timestamp
+            if (!request.Query.TryGetValue("Timestamp", out var timestampValue) ||
+                !long.TryParse(timestampValue, out long timestamp))
+                return (false, "no Timestamp", null);
+
+            // 提取并验证Aopic
+            if (!request.Query.TryGetValue("Aopic", out var aopicValue) ||
+                !long.TryParse(aopicValue, out long aopic))
+                return (false, "no Aopic", null);
+
+
+            // 提取并验证Sign
+            if (!request.Query.TryGetValue("Sign", out var signValue) ||
+                string.IsNullOrWhiteSpace(signValue))
+                return (false, "no Sign", null);
+
+
+
+
+
+            // 4. 反序列化为OrderRefundRequest对象
+            XYOrderRefundRequest orderRefundDto;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    FloatParseHandling = FloatParseHandling.Decimal,
+                    Culture = System.Globalization.CultureInfo.InvariantCulture // 确保数字格式解析正确
+                };
+
+                orderRefundDto = JsonConvert.DeserializeObject<XYOrderRefundRequest>(rawJson, settings);
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                return (false, $"body format not correct: {ex.Message}", null);
+            }
+
+            orderRefundDto.Sign = signValue;
+            orderRefundDto.Timestamp = timestamp;
+            orderRefundDto.Aopic = aopic;
+
+
+            return (true, "", orderRefundDto);
+        }
+
+
+        public bool ValidateSign(TBOrderCreateRequest dto, string rawJson, string appSecret)
         {
             var dictParams = new Dictionary<string, string>();
             dictParams.Add("timestamp", dto.Timestamp.ToString());
@@ -293,7 +496,27 @@ namespace ThirdApis
             return string.Equals(checkSign, dto.Sign, StringComparison.OrdinalIgnoreCase);
         }
 
-        public bool ValidateSign(OrderRefundRequest dto, string rawJson, string appSecret)
+        public bool ValidateSign(XYOrderCreateRequest dto, string rawJson, string appSecret)
+        {
+            var dictParams = new Dictionary<string, string>();
+            dictParams.Add("timestamp", dto.Timestamp.ToString());
+            dictParams.Add("json", rawJson);
+            //参考签名算法
+            var checkSign = Sign(dictParams, appSecret);
+            return string.Equals(checkSign, dto.Sign, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool ValidateSign(TBOrderRefundRequest dto, string rawJson, string appSecret)
+        {
+            var dictParams = new Dictionary<string, string>();
+            dictParams.Add("timestamp", dto.Timestamp.ToString());
+            dictParams.Add("json", rawJson);
+            //参考签名算法
+            var checkSign = Sign(dictParams, appSecret);
+            return string.Equals(checkSign, dto.Sign, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool ValidateSign(XYOrderRefundRequest dto, string rawJson, string appSecret)
         {
             var dictParams = new Dictionary<string, string>();
             dictParams.Add("timestamp", dto.Timestamp.ToString());

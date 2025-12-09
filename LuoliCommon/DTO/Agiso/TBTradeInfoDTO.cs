@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LuoliCommon.DTO.Agiso
 {
-    public class TradeInfoDTO
+    public class TBTradeInfoDTO
     {
         public bool IsSuccess { get; set; }
         public TradeData Data { get; set; }
