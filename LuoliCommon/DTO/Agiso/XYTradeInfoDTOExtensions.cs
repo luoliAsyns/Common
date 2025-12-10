@@ -56,8 +56,10 @@ namespace LuoliCommon.DTO.Agiso
             else
                 dto.TargetProxy = ETargetProxy.Default;
 
+            //要加8小时
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            dto.CreateTime = epoch.AddMilliseconds(tradeInfo.Data.create_time).ToLocalTime();
+            dto.CreateTime = epoch.AddMilliseconds(tradeInfo.Data.create_time).ToLocalTime().AddHours(8);
+            
 
             dto.UpdateTime = dto.CreateTime;
 
