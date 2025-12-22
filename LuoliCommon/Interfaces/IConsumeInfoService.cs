@@ -3,9 +3,9 @@ using LuoliCommon.DTO.Coupon;
 using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Entities;
 
-namespace ThirdApis.Services.ConsumeInfo
+namespace LuoliCommon.Interfaces
 {
-    public interface IConsumeInfoRepository
+    public interface IConsumeInfoService
     {
         Task<ApiResponse<ConsumeInfoDTO>> ConsumeInfoQuery(string goodsType, long id);
         Task<ApiResponse<ConsumeInfoDTO>> ConsumeInfoQuery(string goodsType, string coupon);

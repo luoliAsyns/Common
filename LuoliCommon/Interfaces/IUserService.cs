@@ -1,8 +1,8 @@
 ﻿using LuoliCommon.Entities;
 
-namespace GatewayService.User
+namespace LuoliCommon.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserService
     {
 
         Task<ApiResponse<bool>> Login(string userName, string password);

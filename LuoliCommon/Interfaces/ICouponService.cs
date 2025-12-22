@@ -3,9 +3,9 @@ using LuoliCommon.DTO.ExternalOrder;
 using LuoliCommon.Entities;
 using LuoliCommon.Enums;
 
-namespace ThirdApis.Services.Coupon
+namespace LuoliCommon.Interfaces
 {
-    public interface ICouponRepository
+    public interface ICouponService
     {
         Task<ApiResponse<CouponDTO>> Query(string coupon);
         Task<ApiResponse<CouponDTO>> Query(string from_platform, string tid);
