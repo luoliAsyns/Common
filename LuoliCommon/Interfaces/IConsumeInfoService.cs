@@ -15,11 +15,11 @@ namespace LuoliCommon.Interfaces
         [Get("/api/consume-info/query-coupon")]
         Task<Entities.ApiResponse<ConsumeInfoDTO>> GetAsync(string goodsType, string coupon);
         [Post("/api/consume-info/update")]
-        Task<Entities.ApiResponse<bool>> UpdateAsync(LuoliCommon.DTO.ConsumeInfo.UpdateRequest ur);
+        Task<Entities.ApiResponse<bool>> UpdateAsync([Body] LuoliCommon.DTO.ConsumeInfo.UpdateRequest ur);
         [Post("/api/consume-info/delete")]
-        Task<Entities.ApiResponse<bool>> DeleteAsync(DeleteRequest dr);
+        Task<Entities.ApiResponse<bool>> DeleteAsync([Body] DeleteRequest dr);
         [Post("/api/consume-info/insert")]
-        Task<Entities.ApiResponse<bool>> InsertAsync(ConsumeInfoDTO dto);
+        Task<Entities.ApiResponse<bool>> InsertAsync([Body] ConsumeInfoDTO dto);
 
     }
 }

@@ -21,12 +21,12 @@ namespace LuoliCommon.Interfaces
           DateTime? endTime = null);
 
         [Post("/api/external-order/update")]
-        Task<Entities.ApiResponse<bool>> Update(UpdateRequest ur);
+        Task<Entities.ApiResponse<bool>> Update([Body] UpdateRequest ur);
 
         [Post("/api/external-order/delete")]
-        Task<Entities.ApiResponse<bool>> Delete(DeleteRequest dto);
+        Task<Entities.ApiResponse<bool>> Delete([Body] DeleteRequest dto);
 
         [Post("/api/external-order/insert")]
-        Task<Entities.ApiResponse<bool>> Insert(ExternalOrderDTO dto);
+        Task<Entities.ApiResponse<bool>> Insert([Body] ExternalOrderDTO dto);
     }
 }

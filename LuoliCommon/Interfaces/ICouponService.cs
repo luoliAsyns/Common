@@ -36,23 +36,23 @@ namespace LuoliCommon.Interfaces
         [Get("/api/coupon/validate")]
         Task<Entities.ApiResponse<List<CouponDTO>>> Validate(string[] coupons,  ECouponStatus status = ECouponStatus.Default);
         [Post("/api/coupon/invalidate")]
-        Task<Entities.ApiResponse<bool>> Invalidate(UpdateErrorCodeRequest coupon);
+        Task<Entities.ApiResponse<bool>> Invalidate([Body] UpdateErrorCodeRequest coupon);
        
        
         [Post("/api/coupon/generate")]
-        Task<Entities.ApiResponse<CouponDTO>> Generate(ExternalOrderDTO dto);
+        Task<Entities.ApiResponse<CouponDTO>> Generate([Body] ExternalOrderDTO dto);
         [Post("/api/coupon/generate-manual")]
-        Task<Entities.ApiResponse<CouponDTO>> GenerateManual(GenerateManualReqest jObject);
+        Task<Entities.ApiResponse<CouponDTO>> GenerateManual([Body] GenerateManualReqest jObject);
 
 
 
         [Post("/api/coupon/delete")] 
-        Task<Entities.ApiResponse<bool>> Delete(string coupon);
+        Task<Entities.ApiResponse<bool>> Delete([Query] string coupon);
         [Post("/api/coupon/update")] 
-        Task<Entities.ApiResponse<bool>> Update(LuoliCommon.DTO.Coupon.UpdateRequest ur);
+        Task<Entities.ApiResponse<bool>> Update([Body] LuoliCommon.DTO.Coupon.UpdateRequest ur);
 
         [Post("/api/coupon/update-error")] 
-        Task<Entities.ApiResponse<bool>> UpdateErrorCode(LuoliCommon.DTO.Coupon.UpdateErrorCodeRequest ur);
+        Task<Entities.ApiResponse<bool>> UpdateErrorCode([Body] LuoliCommon.DTO.Coupon.UpdateErrorCodeRequest ur);
 
 
     }

@@ -7,11 +7,11 @@ namespace LuoliCommon.Interfaces
     public interface IUserService
     {
         [Post("/api/user/login")]
-        Task<Entities.ApiResponse<bool>> Login(LoginRequest re);
+        Task<Entities.ApiResponse<bool>> Login([Body] LoginRequest re);
         [Post("/api/user/register")]
-        Task<Entities.ApiResponse<string>> Register(RegisterRequest re);
+        Task<Entities.ApiResponse<string>> Register([Body] RegisterRequest re);
         [Post("/api/user/change-password")]
-        Task<Entities.ApiResponse<bool>> ChangePassword(ChangePasswordRequest re);
+        Task<Entities.ApiResponse<bool>> ChangePassword([Body] ChangePasswordRequest re);
 
     }
 }
