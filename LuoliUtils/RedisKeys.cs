@@ -45,5 +45,6 @@
         public const string CICacheStoreSec = "ci.cache.store.sec";
         public const string EOCacheStoreSec = "eo.cache.store.sec";
         public const string CouponCacheStoreSec = "coupon.cache.store.sec";
+        public const string ProxyOrderCacheStoreSec = "proxyorder.cache.store.sec";
     }
 }
