@@ -42,7 +42,7 @@ namespace LuoliCommon.Interfaces
         [Post("/api/coupon/generate")]
         Task<Entities.ApiResponse<CouponDTO>> Generate([Body] ExternalOrderDTO dto);
         [Post("/api/coupon/generate-manual")]
-        Task<Entities.ApiResponse<CouponDTO>> GenerateManual([Body] GenerateManualReqest jObject);
+        Task<Entities.ApiResponse<CouponDTO>> GenerateManual([Body] GenerateManualRequest jObject);
 
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LuoliCommon.DTO.Coupon
 {
-    public class GenerateManualReqest
+    public class GenerateManualRequest
     {
         public string from_platform { get; set; }
         public string tid { get; set; }
